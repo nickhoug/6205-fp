@@ -84,7 +84,7 @@ module testbench_3;
         find_corners_flag = 1'b1;
         #10;
         find_corners_flag = 1'b0;
-        #50000; 
+        #50010; 
         $display("Right: %d , Left: %d , Top: %d , Bot: %d ", right_edge, left_edge, top_edge, bot_edge);
 
         $display("Finishing Sim"); //print nice message
