@@ -28,6 +28,12 @@ module testbench_3;
     logic [8:0] top_edge; 
     logic [8:0] bot_edge; 
 
+    logic [16:0] addr_out;
+    logic [7:0] corner_width;
+    logic [8:0] corner_height;
+
+    logic data_valid_out_suit_rank; 
+
     xilinx_single_port_ram_read_first #(
     .RAM_WIDTH(16),                       // Specify RAM data width
     .RAM_DEPTH(76800),                     // Specify RAM depth (number of entries) 1.2Mbits 
@@ -62,6 +68,25 @@ module testbench_3;
     .bot_edge(bot_edge)
     );
 
+    card_isolator #(
+    .HEIGHT(320), 
+    .WIDTH(240))
+    suit_rank(
+    .clk_in(clk), //system clock
+    .rst_in(rst), //system reset
+
+    .right_edge(right_edge), 
+    .left_edge(left_edge),
+    .top_edge(top_edge),
+    .bot_edge(bot_edge), 
+    .start_flag(data_valid_out),  
+ 
+    .addr_out(addr_out), 
+    .corner_width(corner_width),
+    .corner_height(corner_height),
+    .data_valid_out(data_valid_out_suit_rank)
+  );
+
     always begin
         #5;  //every 5 ns switch...so period of clock is 10 ns...100 MHz clock
         clk = !clk;
@@ -86,6 +111,8 @@ module testbench_3;
         find_corners_flag = 1'b0;
         #50010; 
         $display("Right: %d , Left: %d , Top: %d , Bot: %d ", right_edge, left_edge, top_edge, bot_edge);
+        #10000; 
+
 
         $display("Finishing Sim"); //print nice message
         $finish;
