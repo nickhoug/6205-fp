@@ -42,11 +42,11 @@ module card_isolator #(
             math_flag <= 1; 
             end_flag <= 0; 
             index_x <= left_edge;
-            index_y <= top_edge; 
-            data_valid_out <= 1; 
+            index_y <= top_edge;  
         end 
 
         if (math_flag) begin
+            data_valid_out <= 1;
             addr_out <= index_x + index_y * WIDTH; 
             index_x <= index_x + 1; 
             if (index_x == left_edge + corner_width) begin 
@@ -55,12 +55,12 @@ module card_isolator #(
                 if (index_y == top_edge + corner_height) begin 
                     end_flag <= 1;
                     math_flag <= 0; 
-                    data_valid_out <= 0;
                 end 
             end 
         end 
 
         if (end_flag) begin 
+            data_valid_out <= 0;
             addr_out <= 0; 
             end_flag <= 0; 
             index_x <= 0; 

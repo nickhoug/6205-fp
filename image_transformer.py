@@ -173,6 +173,23 @@ def mem_to_png_L(file_path):
     processed_image.save(f'images_thresh/{file_path[11:len(file_path) - 14]}_mask_new.png')
     return 
 
+def mem_to_png_edges(file_path, height, width):
+
+    im = np.zeros((height, width), dtype=np.int8) # shape = (height, width)
+
+    with open(f'{file_path}','r') as f:  
+        for j in list(range(height)): 
+            for i in list(range(width)):
+                hex_value = f.read(4)
+                binary_value = hex_to_binary(hex_value)
+                L = int(binary_value[8:], 2)
+                im[j, i] = L
+                f.read(1)
+
+    processed_image = Image.fromarray(im, 'L')
+    processed_image.save(f'images_corner/{file_path[11:len(file_path) - 4]}.png')
+    return 
+
 def crosshair(file_path, x, y): 
     width, height = 240, 320
 
@@ -225,10 +242,12 @@ def edges(file_path, left, right, top, bot):
         
     return
 
-card_name = 'king_of_clubs'
+card_name = 'ace_of_hearts'
 
 #png_to_mem(f'images_test/{card_name}_test.png')
 #clear_comments(f'mem_thresh/{card_name}_thresh.mem')
 #mem_to_png_L(f'mem_thresh/{card_name}_thresh_processed.mem')
 #crosshair(f'images_thresh/{card_name}_thresh_mask.png', 114, 153)
-edges(f'images_thresh/{card_name}_thresh_mask.png', 73, 155, 95, 211)
+#edges(f'images_thresh/{card_name}_thresh_mask.png', 73, 155, 95, 211)
+clear_comments(f'mem_corner/{card_name}_corner.mem')
+mem_to_png_edges(f'mem_corner/{card_name}_corner_processed.mem', 23, 10)
