@@ -16,7 +16,7 @@
 `define CHECK_SIZE 16
 `define STARTING_SHIFT `CHECK_SIZE/2
 
-module find_corners #(
+module edges #(
     parameter HEIGHT = 320, 
     parameter WIDTH = 240)(
     input wire clk_in, //system clock
@@ -25,7 +25,7 @@ module find_corners #(
     input wire find_corners_flag,
     input wire [$clog2(WIDTH) - 1: 0] x_center, //8 bits
     input wire [$clog2(HEIGHT) - 1: 0] y_center, //9 bits
-    input wire [15:0] pixel_data_in,  
+    input wire pixel_data_in,  
 
     output logic [$clog2(WIDTH*HEIGHT) - 1:0] addr_out, // 17 bits 
     output logic data_valid_out,
@@ -59,16 +59,19 @@ logic [$clog2(HEIGHT - `STARTING_SHIFT) - 1:0] shift_reg_height;
 
 logic pixel_data_in_thresh; 
 
-assign pixel_data_in_thresh = 1 ? (pixel_data_in == 16'h00FF) : 0; 
+logic busy = 0; 
+
+assign pixel_data_in_thresh = pixel_data_in; 
 
 always_ff @(posedge clk_in) begin
     find_corners_flag_old <= find_corners_flag;
 
-    if (find_corners_flag_old == 0 && find_corners_flag == 1) begin
+    if (find_corners_flag_old == 0 && find_corners_flag == 1 && busy == 0) begin
         delay_flag <= 1; 
         addr_out <= `START_ADDR_X; 
         index_x <= WIDTH - 1; 
         index_y <= HEIGHT - 1;
+        busy <= 1; 
     end
 
     if (delay_flag == 1'b1) begin 
@@ -120,6 +123,7 @@ always_ff @(posedge clk_in) begin
         if (shift_reg_width == WIDTH - `STARTING_SHIFT) begin
             check_flag_right <= 0; 
             shift_reg_width <= 0;
+            end_flag <= 1;
         end 
         if (line_cache_x[`CHECK_SIZE - 1: 0] != `RIGHT_EDGE) begin 
             line_cache_x <= line_cache_x >> 1; 
@@ -138,6 +142,7 @@ always_ff @(posedge clk_in) begin
         if (shift_reg_width == WIDTH - `STARTING_SHIFT) begin
             check_flag_left <= 0; 
             shift_reg_width <= 0;
+            end_flag <= 1;
         end 
         if (line_cache_x[WIDTH - 1: WIDTH - `CHECK_SIZE] != `LEFT_EDGE) begin 
             line_cache_x <= line_cache_x << 1; 
@@ -156,6 +161,7 @@ always_ff @(posedge clk_in) begin
         if (shift_reg_height == HEIGHT - `STARTING_SHIFT) begin
             check_flag_top <= 0; 
             shift_reg_height <= 0;
+            end_flag <= 1;
         end 
         if (line_cache_y[HEIGHT - 1: HEIGHT - `CHECK_SIZE] != `TOP_EDGE) begin 
             line_cache_y <= line_cache_y << 1; 
@@ -175,6 +181,7 @@ always_ff @(posedge clk_in) begin
         if (shift_reg_height == HEIGHT - `STARTING_SHIFT) begin
             check_flag_bot <= 0; 
             shift_reg_height <= 0;
+            end_flag <= 1;
         end 
         if (line_cache_y[`CHECK_SIZE - 1: 0] != `BOTTOM_EDGE) begin 
             line_cache_y <= line_cache_y >> 1; 
@@ -184,6 +191,7 @@ always_ff @(posedge clk_in) begin
 
     if (end_flag == 1) begin 
         data_valid_out <= 0; 
+        busy <= 0; 
     end 
 
     if (rst_in == 1) begin 
@@ -204,7 +212,9 @@ always_ff @(posedge clk_in) begin
         addr_out <= 0; 
 
         shift_reg_height <= 0;
-        shift_reg_width <= 0; 
+        shift_reg_width <= 0;
+
+        busy <= 0;  
 
     end 
 end

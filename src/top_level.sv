@@ -1,156 +1,403 @@
-`default_nettype none
 `timescale 1ns / 1ps
+`default_nettype none
 
-`define HEIGHT 320
-`define WIDTH 240
-`define SIZE `HEIGHT * `WIDTH
+module top_level(
+  input wire clk_100mhz, //clock @ 100 mhz
+  input wire [15:0] sw, //switches
+  input wire btnc, //btnc (used for reset)
 
-/****************************COMMANDS******************************************
+  input wire [7:0] ja, //lower 8 bits of data from camera
+  input wire [2:0] jb, //upper three bits from camera (return clock, vsync, hsync)
+  output logic jbclk,  //signal we provide to camera
+  output logic jblock, //signal for resetting camera
 
-python3 lab-bc.py -o obj
+  output logic [15:0] led, //just here for the funs
 
-openFPGALoader -b arty_a7_100t obj/out.bit
+  output logic [3:0] vga_r, vga_g, vga_b,
+  output logic vga_hs, vga_vs,
+  output logic [7:0] an,
+  output logic caa,cab,cac,cad,cae,caf,cag
 
-********************************************************************************/
+  );
 
-module top_level (
-    input wire clk_100mhz, //clock @ 100 mhz
-    input wire btnc, //btnc (used for reset)
-    input wire [7:0] ja, //lower 8 bits of data from camera
-    input wire [2:0] jb, //upper three bits from camera (return clock, vsync, hsync)
+  //system reset switch linking
+  logic sys_rst; //global system reset
+  assign sys_rst = btnc; //just done to make sys_rst more obvious
+  assign led = sw; //switches drive LED (change if you want)
 
-    output logic jbclk,  //signal we provide to camera
-    output logic jblock, //signal for resetting camera
-    output logic [15:0] led
-    //output logic ca, cb, cc, cd, ce, cf, cg,
-    //output logic [7:0] an
-);
+  /* Video Pipeline */
+  logic clk_65mhz; //65 MHz clock line
 
-    //system reset switch linking
-    logic sys_rst; //global system reset
-    assign sys_rst = btnc; //just done to make sys_rst more obvious
-
-    /* Video Pipeline */
-    logic clk_65mhz; //65 MHz clock line
-
-    //Generate 65 MHz:
-    clk_wiz_lab3 clk_gen(
-                        .clk_in1(clk_100mhz),
-                        .clk_out1(clk_65mhz)); //after frame buffer everything on clk_65mhz
+  //vga module generation signals:
+  logic [10:0] hcount;    // pixel on current line
+  logic [9:0] vcount;     // line number
+  logic hsync, vsync, blank; //control signals for vga
+  logic hsync_t, vsync_t, blank_t; //control signals out of transform
 
 
-    //camera module: (see datasheet)
-    logic cam_clk_buff, cam_clk_in; //returning camera clock
-    logic vsync_buff, vsync_in; //vsync signals from camera
-    logic href_buff, href_in; //href signals from camera
-    logic [7:0] pixel_buff, pixel_in; //pixel lines from camera
-    logic [15:0] cam_pixel; //16 bit 565 RGB image from camera
-    logic valid_pixel; //indicates valid pixel from camera
-    logic frame_done; //indicates completion of frame from camera
+  //camera module: (see datasheet)
+  logic cam_clk_buff, cam_clk_in; //returning camera clock
+  logic vsync_buff, vsync_in; //vsync signals from camera
+  logic href_buff, href_in; //href signals from camera
+  logic [7:0] pixel_buff, pixel_in; //pixel lines from camera
+  logic [15:0] cam_pixel; //16 bit 565 RGB image from camera
+  logic valid_pixel; //indicates valid pixel from camera
+  logic frame_done; //indicates completion of frame from camera
 
-    //Clock domain crossing to synchronize the camera's clock
-    //to be back on the 65MHz system clock, delayed by a clock cycle.
-    always_ff @(posedge clk_65mhz) begin
-        cam_clk_buff <= jb[0]; //sync camera
-        cam_clk_in <= cam_clk_buff;
-        vsync_buff <= jb[1]; //sync vsync signal
-        vsync_in <= vsync_buff;
-        href_buff <= jb[2]; //sync href signal
-        href_in <= href_buff;
-        pixel_buff <= ja; //sync pixels
-        pixel_in <= pixel_buff;
+  //rotate module:
+  logic valid_pixel_rotate;  //indicates valid rotated pixel
+  logic [15:0] pixel_rotate; //rotated 565 rotate pixel
+  logic [16:0] pixel_addr_in; //address of rotated pixel in 240X320 memory
+
+  //values  of frame buffer:
+  logic [16:0] pixel_addr_out; //
+  logic [15:0] frame_buff; //output of scale module
+
+  // output of scale module
+  logic [15:0] full_pixel;//mirrored and scaled 565 pixel
+
+  //output of rgb to ycrcb conversion:
+  logic [9:0] y, cr, cb; //ycrcb conversion of full pixel
+
+  //output of threshold module:
+  logic mask; //Whether or not thresholded pixel is 1 or 0
+
+  //Center of Mass variables
+  logic [10:0] x_com, x_com_calc; //long term x_com and output from module, resp
+  logic [9:0] y_com, y_com_calc; //long term y_com and output from module, resp
+  logic new_com; //used to know when to update x_com and y_com ...
+  //using x_com_calc and y_com_calc values
+
+  //Crosshair value hot when hcount,vcount== (x_com, y_com)
+  logic crosshair;
+
+  logic edges; 
+
+  //vga_mux output:
+  logic [11:0] mux_pixel; //final 12 bit information from vga multiplexer
+  //goes right into RGB of output for video render
+
+
+  /************************************PIPELINE*******************************************/
+
+  logic [10:0] hcount_pipe [7-1:0];
+  logic [9:0] vcount_pipe [7-1:0];
+  logic blank_pipe [7-1:0];
+
+  logic crosshair_pipe [4-1:0];
+
+  logic [15:0] full_pixel_pipe [3-1:0];
+
+  logic hsync_pipe [8-1:0];
+  logic vsync_pipe [8-1:0];
+
+  logic [9:0] top_edge_calc; 
+  logic [9:0] bot_edge_calc; 
+  logic [8:0] left_edge_calc;
+  logic [8:0] right_edge_calc;
+
+  logic [9:0] top_edge; 
+  logic [9:0] bot_edge; 
+  logic [8:0] left_edge;
+  logic [8:0] right_edge;
+
+  logic find_corners_flag; 
+  logic find_corners_valid;
+
+  logic [$clog2(320*240*2*2) - 1:0] addr_corners; 
+
+  logic pixel_data_corners; 
+
+  always_ff @(posedge clk_65mhz)begin
+    hcount_pipe[0] <= hcount;
+    vcount_pipe[0] <= vcount;
+    crosshair_pipe[0] <= crosshair;
+    full_pixel_pipe[0] <= full_pixel;
+    hsync_pipe[0] <= hsync;
+    vsync_pipe[0] <= vsync; 
+    blank_pipe[0] <= blank;
+
+    for (int i = 1; i < 7; i = i + 1) begin
+      hcount_pipe[i] <= hcount_pipe[i-1];
+      vcount_pipe[i] <= vcount_pipe[i-1];
+      blank_pipe[i] <= blank_pipe[i-1];
     end
 
-    //Controls and Processes Camera information
-    camera camera_m(
-                    //signal generate to camera:
-                    .clk_65mhz(clk_65mhz),
-                    .jbclk(jbclk),
-                    .jblock(jblock),
-                    //returned information from camera:
-                    .cam_clk_in(cam_clk_in),
-                    .vsync_in(vsync_in),
-                    .href_in(href_in),
-                    .pixel_in(pixel_in),
-                    //output framed info from camera for processing:
-                    .pixel_out(cam_pixel),
-                    .pixel_valid_out(valid_pixel),
-                    .frame_done_out(frame_done));
+    for (int j = 1; j < 4; j = j + 1) begin
+      crosshair_pipe[j] <= crosshair_pipe[j-1];
+    end 
 
-    //rotate module:
-    logic valid_pixel_rotate;  //indicates valid rotated pixel
-    logic [15:0] pixel_rotate; //rotated 565 rotate pixel
-    logic [16:0] pixel_addr_in; //address of rotated pixel in 240X320 memory
+    for (int k = 1; k < 3; k = k + 1) begin 
+      full_pixel_pipe[k] <= full_pixel_pipe[k-1];
+    end 
 
-    //Rotates Image to render correctly (pi/2 CCW rotate):
-    rotate rotate_m (
-                    .cam_clk_in(cam_clk_in),
-                    .valid_pixel_in(valid_pixel),
-                    .pixel_in(cam_pixel),
-                    .valid_pixel_out(valid_pixel_rotate),
-                    .pixel_out(pixel_rotate),
-                    .frame_done_in(frame_done),
-                    .pixel_addr_in(pixel_addr_in));
+    for (int l = 1; l < 8; l = l + 1) begin 
+      hsync_pipe[l] <= hsync_pipe[l-1];
+      vsync_pipe[l] <= vsync_pipe[l-1];
+    end 
 
-    //values  of frame buffer:
-    logic [16:0] pixel_addr_out; //
-    logic [15:0] frame_buff; //output of scale module 
+  end
 
-    //Two Clock Frame Buffer:
-    //Data written on 16.67 MHz (From camera)
-    //Data read on 65 MHz (start of video pipeline information)
-    //Latency is 2 cycles.
-    xilinx_true_dual_port_read_first_2_clock_ram #(
-                                                .RAM_WIDTH(16),
-                                                .RAM_DEPTH(`SIZE))
-                                                RGB_frame_buffer (
-                                                //Write Side (16.67MHz)
-                                                .addra(pixel_addr_in),
-                                                .clka(cam_clk_in),
-                                                .wea(valid_pixel_rotate),
-                                                .dina(pixel_rotate),
-                                                .ena(1'b1),
-                                                .regcea(1'b1),
-                                                .rsta(sys_rst),
-                                                .douta(),
-                                                //Read Side (65 MHz)
-                                                .addrb(pixel_addr_out),
-                                                .dinb(16'b0),
-                                                .clkb(clk_65mhz),
-                                                .web(1'b0),
-                                                .enb(1'b1),
-                                                .rstb(sys_rst),
-                                                .regceb(1'b1),
-                                                .doutb(frame_buff)
-                                            );
+  /************************************PIPELINE*******************************************/
 
-    threshold thresholder (
-                        .clk_in(clk_65mhz), //system clock
-                        .rst_in(sys_rst), //system reset
+  //Generate 65 MHz:
+  clk_wiz_lab3 clk_gen(
+    .clk_in1(clk_100mhz),
+    .clk_out1(clk_65mhz)); //after frame buffer everything on clk_65mhz
 
-                        .hcount_in(hcount_in), //current hcount being read
-                        .vcount_in(vcount_in), //current vcount being read
-                        .data_valid_in(threshold_valid_in), 
-                        .pixel_data_in(ram_out), //incoming pixel
+  //Generate VGA timing signals:
+  vga vga_gen(
+    .pixel_clk_in(clk_65mhz),
+    .hcount_out(hcount),
+    .vcount_out(vcount),
+    .hsync_out(hsync),
+    .vsync_out(vsync),
+    .blank_out(blank));
 
-                        .data_valid_out(threshold_valid_out),
-                        .pixel_data_out(threshold_out), //output pixels of data (blah make this packed)
-                        .hcount_out(hcount_out), //current hcount being read
-                        .vcount_out(vcount_out) //current vcount being read
-                        );
+  //Clock domain crossing to synchronize the camera's clock
+  //to be back on the 65MHz system clock, delayed by a clock cycle.
+  always_ff @(posedge clk_65mhz) begin
+    cam_clk_buff <= jb[0]; //sync camera
+    cam_clk_in <= cam_clk_buff;
+    vsync_buff <= jb[1]; //sync vsync signal
+    vsync_in <= vsync_buff;
+    href_buff <= jb[2]; //sync href signal
+    href_in <= href_buff;
+    pixel_buff <= ja; //sync pixels
+    pixel_in <= pixel_buff;
+  end
 
-    center_of_mass COM (
-                        .clk_in(clk_65mhz),
-                        .rst_in(sys_rst),
-                        .x_in(hcount_out),
-                        .y_in(vcount_out),
-                        .valid_in(com_valid_in),
-                        .tabulate_in(com_tabulate),
-                        .x_out(com_x),
-                        .y_out(com_y),
-                        .valid_out(com_valid_out)
-                        );
+  //Controls and Processes Camera information
+  camera camera_m(
+    //signal generate to camera:
+    .clk_65mhz(clk_65mhz),
+    .jbclk(jbclk),
+    .jblock(jblock),
+    //returned information from camera:
+    .cam_clk_in(cam_clk_in),
+    .vsync_in(vsync_in),
+    .href_in(href_in),
+    .pixel_in(pixel_in),
+    //output framed info from camera for processing:
+    .pixel_out(cam_pixel),
+    .pixel_valid_out(valid_pixel),
+    .frame_done_out(frame_done));
+
+  //Rotates Image to render correctly (pi/2 CCW rotate):
+  rotate rotate_m (
+    .cam_clk_in(cam_clk_in),
+    .valid_pixel_in(valid_pixel),
+    .pixel_in(cam_pixel),
+    .valid_pixel_out(valid_pixel_rotate),
+    .pixel_out(pixel_rotate),
+    .frame_done_in(frame_done),
+    .pixel_addr_in(pixel_addr_in));
+
+  //Two Clock Frame Buffer:
+  //Data written on 16.67 MHz (From camera)
+  //Data read on 65 MHz (start of video pipeline information)
+  //Latency is 2 cycles.
+  xilinx_true_dual_port_read_first_2_clock_ram #(
+    .RAM_WIDTH(16),
+    .RAM_DEPTH(320*240))
+    frame_buffer (
+    //Write Side (16.67MHz)
+    .addra(pixel_addr_in),
+    .clka(cam_clk_in),
+    .wea(valid_pixel_rotate),
+    .dina(pixel_rotate),
+    .ena(1'b1),
+    .regcea(1'b1),
+    .rsta(sys_rst),
+    .douta(),
+    //Read Side (65 MHz)
+    .addrb(pixel_addr_out),
+    .dinb(16'b0),
+    .clkb(clk_65mhz),
+    .web(1'b0),
+    .enb(1'b1),
+    .rstb(sys_rst),
+    .regceb(1'b1),
+    .doutb(frame_buff)
+  );
+
+  //Based on current hcount and vcount as well as
+  //scaling and mirror information requests correct pixel
+  //from BRAM (on 65 MHz side).
+  //latency: 2 cycles
+  //IMPORTANT: this module is "start" of Output pipeline
+  //hcount and vcount are fine here.
+  //however latency in the image information starts to build up starting here
+  //and we need to make sure to continue to use screen location information
+  //that is "delayed" the right amount of cycles!
+  //AS A RESULT, most downstream modules after this will need to use appropriately
+  //pipelined versions of hcount, vcount, hsync, vsync, blank as needed
+  //these The pipelining of these stages will need to be determined
+  //for CHECKOFF 3!
+  mirror mirror_m(
+    .clk_in(clk_65mhz),
+    .mirror_in(sw[2]),
+    .scale_in(sw[1:0]),
+    .hcount_in(hcount), //
+    .vcount_in(vcount),
+    .pixel_addr_out(pixel_addr_out)
+  );
+
+  //Based on hcount and vcount as well as scaling
+  //gate the release of frame buffer information
+  //Latency: 0
+  scale scale_m(
+    .scale_in(sw[1:0]),
+    .hcount_in(hcount_pipe[3]), //TODO: needs to use pipelined signal (PS2) (DONE)
+    .vcount_in(vcount_pipe[3]), //TODO: needs to use pipelined signal (PS2) (DONE)
+    .frame_buff_in(frame_buff),
+    .cam_out(full_pixel)
+    );
+
+  //LED Display controller
+  //module not in video pipeline, provides diagnostic information
+  //about high/low mask state as well as what channel is selected:
+  //: "r:red, g:green, b:blue, y: luminance, Cr: Red Chrom, Cb: Blue Chrom
+  seven_segment_controller mssc(.clk_in(clk_65mhz),
+                 .rst_in(btnc),
+                 .val_in(sw[15:8]),
+                 .cat_out({cag, caf, cae, cad, cac, cab, caa}),
+                 .an_out(an));
+
+  //Thresholder: Takes in the full RGB and YCrCb information and
+  //based on upper and lower bounds masks
+  //module has 0 cycle latency
+  threshold grayscale (
+     .r_in(full_pixel[15:11]), //TODO: needs to use pipelined signal (PS5) (DONE)
+     .g_in(full_pixel[10:5]),  //TODO: needs to use pipelined signal (PS5) (DONE)
+     .b_in(full_pixel[4:0]),   //TODO: needs to use pipelined signal (PS5) (DONE)
+     .mask(sw[15:8]),
+     .mask_out(mask));
+
+  xilinx_true_dual_port_read_first_2_clock_ram #(
+    .RAM_WIDTH(1),
+    .RAM_DEPTH(320*240*2*2))
+    mask_bram (
+    //Write Side (65 MHz)
+    .addra(hcount_pipe[6] + vcount_pipe[6]*240),
+    .clka(clk_65mhz),
+    .wea((hcount_pipe[6] <= 320*2-1 && vcount_pipe[6] <= 240*2-1)),
+    .dina(mask),
+    .ena(1'b1),
+    .regcea(1'b1),
+    .rsta(sys_rst),
+    .douta(),
+    //Read Side (65 MHz)
+    .addrb(addr_corners),
+    .dinb(16'b0),
+    .clkb(clk_65mhz),
+    .web(1'b0),
+    .enb(1'b1),
+    .rstb(sys_rst),
+    .regceb(1'b1),
+    .doutb(pixel_data_corners)
+  );
+
+  //Center of Mass:
+  center_of_mass com_m(
+    .clk_in(clk_65mhz),
+    .rst_in(sys_rst),
+    .x_in(hcount_pipe[6]),  //TODO: needs to use pipelined signal! (PS3) (DONE)
+    .y_in(vcount_pipe[6]), //TODO: needs to use pipelined signal! (PS3) (DONE)
+    .valid_in(mask),
+    .tabulate_in((hcount==0 && vcount==0)),
+    .x_out(x_com_calc),
+    .y_out(y_com_calc),
+    .valid_out(new_com));
+
+  edges #(
+    .HEIGHT(640), 
+    .WIDTH(480))
+    corner_finder (
+    .clk_in(clk_65mhz), //system clock
+    .rst_in(sys_rst), //system reset
+
+    .find_corners_flag(find_corners_flag),
+    .x_center(x_com), 
+    .y_center(y_com), 
+    .pixel_data_in(pixel_data_corners),  
+
+    .addr_out(addr_corners), 
+    .data_valid_out(find_corners_valid),
+    .right_edge(right_edge_calc), 
+    .left_edge(left_edge_calc),
+    .top_edge(top_edge_calc),
+    .bot_edge(bot_edge_calc)
+  );
+
+  //update center of mass x_com, y_com based on new_com signal
+  always_ff @(posedge clk_65mhz)begin
+    if (sys_rst)begin
+      x_com <= 0;
+      y_com <= 0;
+    end if(new_com)begin
+      x_com <= x_com_calc;
+      y_com <= y_com_calc;
+      find_corners_flag <= 1; 
+    end if (find_corners_flag) begin 
+      find_corners_flag <= 0; 
+    end 
+  end
+
+  always_ff @(posedge clk_65mhz)begin
+    if (sys_rst)begin
+      left_edge <= 0; 
+      right_edge <= 0; 
+      top_edge <= 0; 
+      bot_edge <= 0; 
+    end if(find_corners_valid)begin
+      left_edge <= left_edge_calc; 
+      right_edge <= right_edge_calc; 
+      top_edge <= top_edge_calc; 
+      bot_edge <= bot_edge_calc; 
+    end
+  end
+
+  //Create Crosshair patter on center of mass:
+  //0 cycle latency
+  assign crosshair = ((vcount==y_com)||(hcount==x_com));
+  assign edges = ((vcount==left_edge)||(vcount==right_edge)||(hcount==top_edge)||(hcount==bot_edge));
+
+  //VGA MUX:
+  //latency 0 cycles (combinational-only module)
+  //module decides what to draw on the screen:
+  // sw[7:6]:
+  //    00: 444 RGB image
+  //    01: GrayScale of Selected Channel (Y, R, etc...)
+  //    10: Masked Version of Selected Channel
+  //    11: Chroma Image with Mask in 6.205 Pink
+  // sw[9:8]:
+  //    00: Nothing
+  //    01: green crosshair on center of mass
+  //    10: image sprite on top of center of mass
+  //    11: all pink screen (for VGA functionality testing)
+  vga_mux switch (
+    .sel_in({sw[7:5], sw[3]}),
+    .camera_pixel_in({full_pixel_pipe[2][15:12],full_pixel_pipe[2][10:7],full_pixel_pipe[2][4:1]}), //TODO: needs to use pipelined signal(PS5) (DONE)
+    .thresholded_pixel_in(mask),
+    .crosshair_in(crosshair_pipe[3]), //TODO: needs to use pipelined signal (PS4) (DONE)
+    .edge_in(edges), 
+    .pixel_out(mux_pixel));
+
+  //blankig logic.
+  //latency 1 cycle
+  always_ff @(posedge clk_65mhz)begin
+    vga_r <= ~blank_pipe[6]?mux_pixel[11:8]:0; //TODO: needs to use pipelined signal (PS6) (DONE)
+    vga_g <= ~blank_pipe[6]?mux_pixel[7:4]:0;  //TODO: needs to use pipelined signal (PS6) (DONE)
+    vga_b <= ~blank_pipe[6]?mux_pixel[3:0]:0;  //TODO: needs to use pipelined signal (PS6) (DONE)
+  end
+
+  assign vga_hs = ~hsync_pipe[7];  //TODO: needs to use pipelined signal (PS7)
+  assign vga_vs = ~vsync_pipe[7];  //TODO: needs to use pipelined signal (PS7)
 
 endmodule
+
+
+
 
 `default_nettype wire
