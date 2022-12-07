@@ -14,8 +14,10 @@
 ## Clock signal
 set_property -dict { PACKAGE_PIN E3    IOSTANDARD LVCMOS33 } [get_ports { clk_100mhz }]; #IO_L12P_T1_MRCC_35 Sch=clk_100mhz
 create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports {clk_100mhz}];
-set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets led_OBUF[5]]; #added
-set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets {led_OBUF[3]}]; #added
+#set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets led_OBUF[5]]; #added
+#set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets {led_OBUF[3]}]; #added
+set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets {sw_IBUF[3]}];  #added
+set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets {led_OBUF[3]}]
 
 
 ##Switches

@@ -20,10 +20,11 @@ module top_level(
 
   );
 
-  //system reset switch linking
-  logic sys_rst; //global system reset
-  assign sys_rst = btnc; //just done to make sys_rst more obvious
-  assign led = sw; //switches drive LED (change if you want)
+  
+  logic sys_rst; 
+  assign sys_rst = btnc; 
+
+  assign led = sw; 
 
   /* Video Pipeline */
   logic clk_65mhz; //65 MHz clock line
@@ -93,18 +94,18 @@ module top_level(
 
   logic [9:0] top_edge_calc; 
   logic [9:0] bot_edge_calc; 
-  logic [8:0] left_edge_calc;
-  logic [8:0] right_edge_calc;
+  logic [10:0] left_edge_calc;
+  logic [10:0] right_edge_calc;
 
   logic [9:0] top_edge; 
   logic [9:0] bot_edge; 
-  logic [8:0] left_edge;
-  logic [8:0] right_edge;
+  logic [10:0] left_edge;
+  logic [10:0] right_edge;
 
   logic find_corners_flag; 
   logic find_corners_valid;
 
-  logic [$clog2(320*240*2*2) - 1:0] addr_corners; 
+  logic [$clog2(640*480) - 1:0] addr_corners; 
 
   logic pixel_data_corners; 
 
@@ -193,10 +194,7 @@ module top_level(
     .frame_done_in(frame_done),
     .pixel_addr_in(pixel_addr_in));
 
-  //Two Clock Frame Buffer:
-  //Data written on 16.67 MHz (From camera)
-  //Data read on 65 MHz (start of video pipeline information)
-  //Latency is 2 cycles.
+  //Latency: 2
   xilinx_true_dual_port_read_first_2_clock_ram #(
     .RAM_WIDTH(16),
     .RAM_DEPTH(320*240))
@@ -221,19 +219,7 @@ module top_level(
     .doutb(frame_buff)
   );
 
-  //Based on current hcount and vcount as well as
-  //scaling and mirror information requests correct pixel
-  //from BRAM (on 65 MHz side).
   //latency: 2 cycles
-  //IMPORTANT: this module is "start" of Output pipeline
-  //hcount and vcount are fine here.
-  //however latency in the image information starts to build up starting here
-  //and we need to make sure to continue to use screen location information
-  //that is "delayed" the right amount of cycles!
-  //AS A RESULT, most downstream modules after this will need to use appropriately
-  //pipelined versions of hcount, vcount, hsync, vsync, blank as needed
-  //these The pipelining of these stages will need to be determined
-  //for CHECKOFF 3!
   mirror mirror_m(
     .clk_in(clk_65mhz),
     .mirror_in(sw[2]),
@@ -243,30 +229,22 @@ module top_level(
     .pixel_addr_out(pixel_addr_out)
   );
 
-  //Based on hcount and vcount as well as scaling
-  //gate the release of frame buffer information
   //Latency: 0
   scale scale_m(
     .scale_in(sw[1:0]),
-    .hcount_in(hcount_pipe[3]), //TODO: needs to use pipelined signal (PS2) (DONE)
-    .vcount_in(vcount_pipe[3]), //TODO: needs to use pipelined signal (PS2) (DONE)
+    .hcount_in(hcount_pipe[4]),
+    .vcount_in(vcount_pipe[4]),
     .frame_buff_in(frame_buff),
     .cam_out(full_pixel)
     );
 
-  //LED Display controller
-  //module not in video pipeline, provides diagnostic information
-  //about high/low mask state as well as what channel is selected:
-  //: "r:red, g:green, b:blue, y: luminance, Cr: Red Chrom, Cb: Blue Chrom
   seven_segment_controller mssc(.clk_in(clk_65mhz),
                  .rst_in(btnc),
                  .val_in(sw[15:8]),
                  .cat_out({cag, caf, cae, cad, cac, cab, caa}),
                  .an_out(an));
 
-  //Thresholder: Takes in the full RGB and YCrCb information and
-  //based on upper and lower bounds masks
-  //module has 0 cycle latency
+  //Latency: 0
   threshold grayscale (
      .r_in(full_pixel[15:11]), //TODO: needs to use pipelined signal (PS5) (DONE)
      .g_in(full_pixel[10:5]),  //TODO: needs to use pipelined signal (PS5) (DONE)
@@ -274,15 +252,16 @@ module top_level(
      .mask(sw[15:8]),
      .mask_out(mask));
 
+  //Latency: 2
   xilinx_true_dual_port_read_first_2_clock_ram #(
     .RAM_WIDTH(1),
-    .RAM_DEPTH(320*240*2*2))
+    .RAM_DEPTH(640*480))
     mask_bram (
     //Write Side (65 MHz)
-    .addra(hcount_pipe[6] + vcount_pipe[6]*240),
-    .clka(clk_65mhz),
-    .wea((hcount_pipe[6] <= 320*2-1 && vcount_pipe[6] <= 240*2-1)),
+    .addra(hcount_pipe[4] + vcount_pipe[4]*480),
     .dina(mask),
+    .clka(clk_65mhz),
+    .wea((hcount_pipe[4] < 480 && vcount_pipe[4] < 640)),
     .ena(1'b1),
     .regcea(1'b1),
     .rsta(sys_rst),
@@ -302,14 +281,15 @@ module top_level(
   center_of_mass com_m(
     .clk_in(clk_65mhz),
     .rst_in(sys_rst),
-    .x_in(hcount_pipe[6]),  //TODO: needs to use pipelined signal! (PS3) (DONE)
-    .y_in(vcount_pipe[6]), //TODO: needs to use pipelined signal! (PS3) (DONE)
+    .x_in(hcount_pipe[4]),  //TODO: needs to use pipelined signal! (PS3) (DONE)
+    .y_in(vcount_pipe[4]), //TODO: needs to use pipelined signal! (PS3) (DONE)
     .valid_in(mask),
     .tabulate_in((hcount==0 && vcount==0)),
     .x_out(x_com_calc),
     .y_out(y_com_calc),
     .valid_out(new_com));
 
+  //Edge calculation
   edges #(
     .HEIGHT(640), 
     .WIDTH(480))
@@ -323,6 +303,7 @@ module top_level(
     .pixel_data_in(pixel_data_corners),  
 
     .addr_out(addr_corners), 
+
     .data_valid_out(find_corners_valid),
     .right_edge(right_edge_calc), 
     .left_edge(left_edge_calc),
@@ -340,7 +321,7 @@ module top_level(
       y_com <= y_com_calc;
       find_corners_flag <= 1; 
     end if (find_corners_flag) begin 
-      find_corners_flag <= 0; 
+      find_corners_flag <= 0;
     end 
   end
 
@@ -358,24 +339,10 @@ module top_level(
     end
   end
 
-  //Create Crosshair patter on center of mass:
-  //0 cycle latency
+  //Create Crosshair and edges
   assign crosshair = ((vcount==y_com)||(hcount==x_com));
-  assign edges = ((vcount==left_edge)||(vcount==right_edge)||(hcount==top_edge)||(hcount==bot_edge));
+  assign edges = ((hcount==left_edge+4)||(hcount==right_edge+4)||(vcount==top_edge)||(vcount==bot_edge));
 
-  //VGA MUX:
-  //latency 0 cycles (combinational-only module)
-  //module decides what to draw on the screen:
-  // sw[7:6]:
-  //    00: 444 RGB image
-  //    01: GrayScale of Selected Channel (Y, R, etc...)
-  //    10: Masked Version of Selected Channel
-  //    11: Chroma Image with Mask in 6.205 Pink
-  // sw[9:8]:
-  //    00: Nothing
-  //    01: green crosshair on center of mass
-  //    10: image sprite on top of center of mass
-  //    11: all pink screen (for VGA functionality testing)
   vga_mux switch (
     .sel_in({sw[7:5], sw[3]}),
     .camera_pixel_in({full_pixel_pipe[2][15:12],full_pixel_pipe[2][10:7],full_pixel_pipe[2][4:1]}), //TODO: needs to use pipelined signal(PS5) (DONE)
@@ -384,8 +351,7 @@ module top_level(
     .edge_in(edges), 
     .pixel_out(mux_pixel));
 
-  //blankig logic.
-  //latency 1 cycle
+  //Latency: 1
   always_ff @(posedge clk_65mhz)begin
     vga_r <= ~blank_pipe[6]?mux_pixel[11:8]:0; //TODO: needs to use pipelined signal (PS6) (DONE)
     vga_g <= ~blank_pipe[6]?mux_pixel[7:4]:0;  //TODO: needs to use pipelined signal (PS6) (DONE)

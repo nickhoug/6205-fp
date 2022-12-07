@@ -6,6 +6,8 @@
 //  not needed during writes or the last read value is desired to be retained,
 //  it is suggested to use a no change RAM as it is more power efficient.
 //  If a reset or enable is not necessary, it may be tied off or removed from the code.
+`timescale 1ns / 1ps
+`default_nettype wire
 
 module xilinx_true_dual_port_read_first_2_clock_ram #(
   parameter RAM_WIDTH = 18,                       // Specify RAM data width
@@ -56,12 +58,14 @@ module xilinx_true_dual_port_read_first_2_clock_ram #(
           BRAM[ram_index] = {RAM_WIDTH{1'b0}};
     end
   endgenerate
+  /*
   integer idx;
   initial begin
     for (idx = 0; idx < RAM_DEPTH; idx = idx + 1) begin
       $dumpvars(0, BRAM[idx]);
     end
   end
+  */
   always @(posedge clka)
     if (ena) begin
       if (wea)
@@ -117,6 +121,8 @@ module xilinx_true_dual_port_read_first_2_clock_ram #(
   endfunction
 
 endmodule
+
+`default_nettype none
 
 // The following is an instantiation template for xilinx_true_dual_port_read_first_2_clock_ram
 /*

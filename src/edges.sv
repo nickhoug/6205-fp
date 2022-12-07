@@ -1,11 +1,11 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-`define START_ADDR_X y_center * WIDTH
-`define END_ADDR_X y_center * WIDTH + WIDTH - 1
+`define START_ADDR_X y_center_cache * WIDTH
+`define END_ADDR_X y_center_cache * WIDTH + WIDTH - 1
 
-`define START_ADDR_Y x_center
-`define END_ADDR_Y (HEIGHT - 1) * WIDTH + x_center
+`define START_ADDR_Y x_center_cache
+`define END_ADDR_Y (HEIGHT - 1) * WIDTH + x_center_cache
 
 `define RIGHT_EDGE 16'hFF_00
 `define LEFT_EDGE 16'h00_FF
@@ -61,22 +61,36 @@ logic pixel_data_in_thresh;
 
 logic busy = 0; 
 
+logic [$clog2(WIDTH) - 1: 0] x_center_cache; 
+logic [$clog2(HEIGHT) - 1: 0] y_center_cache;
+
+
 assign pixel_data_in_thresh = pixel_data_in; 
 
 always_ff @(posedge clk_in) begin
     find_corners_flag_old <= find_corners_flag;
 
     if (find_corners_flag_old == 0 && find_corners_flag == 1 && busy == 0) begin
-        delay_flag <= 1; 
-        addr_out <= `START_ADDR_X; 
+        delay_flag <= 1;  
+
         index_x <= WIDTH - 1; 
         index_y <= HEIGHT - 1;
+
         busy <= 1; 
+
+        line_cache_x <= 0; 
+        line_cache_rst_x <= 0; 
+        line_cache_y <= 0; 
+        line_cache_rst_y <= 0;
+
+        x_center_cache <= x_center; 
+        y_center_cache <= y_center;
     end
 
     if (delay_flag == 1'b1) begin 
         start_flag_x <= 1;
         delay_flag <= 0; 
+        addr_out <= `START_ADDR_X;
     end 
 
     if (start_flag_x == 1) begin 
@@ -192,6 +206,20 @@ always_ff @(posedge clk_in) begin
     if (end_flag == 1) begin 
         data_valid_out <= 0; 
         busy <= 0; 
+        end_flag <= 0; 
+
+        line_cache_x <= 0; 
+        line_cache_rst_x <= 0; 
+        line_cache_y <= 0; 
+        line_cache_rst_y <= 0; 
+
+        index_x <= 0; 
+        index_y <= 0;
+
+        shift_reg_height <= 0;
+        shift_reg_width <= 0;
+
+        addr_out <= 0;
     end 
 
     if (rst_in == 1) begin 
