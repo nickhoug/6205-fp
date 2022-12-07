@@ -1,5 +1,6 @@
 from PIL import Image
 import numpy as np
+import cv2 as cv
 
 def clear_comments(file_path): 
     with open(f'{file_path}','r') as f:
@@ -242,12 +243,45 @@ def edges(file_path, left, right, top, bot):
         
     return
 
-card_name = 'ace_of_hearts'
+def kernel_processer(file_path, mask, width, height): 
+    img = cv.imread(f'{file_path}',0)
+    resized = cv.resize(img, (height, width), interpolation = cv.INTER_AREA)
+    ret, thresh = cv.threshold(resized,mask,255,cv.THRESH_BINARY) #type(thresh) = <class 'numpy.ndarray'>
+    processed_image = Image.fromarray(thresh, 'L')
+    processed_image.save(f'{file_path[:len(file_path)-4]}_thresh.png')
+    return 
 
+def kernel_maker(file_path): 
+    output = ''
+    img = cv.imread(f'{file_path}',0)
+    height, width = np.shape(img)
+    for j in range(height): 
+        for i in range(width): 
+            if img[j][i] == 255: 
+                output = output + '1'
+            if img[j][i] == 0: 
+                output = output + '0'
+    print(f'{file_path[15:16]}: ' + bin_to_hex(output))
+    print('\n')
+    return 
+
+#card_name = 'ace_of_hearts'
 #png_to_mem(f'images_test/{card_name}_test.png')
 #clear_comments(f'mem_thresh/{card_name}_thresh.mem')
 #mem_to_png_L(f'mem_thresh/{card_name}_thresh_processed.mem')
 #crosshair(f'images_thresh/{card_name}_thresh_mask.png', 114, 153)
 #edges(f'images_thresh/{card_name}_thresh_mask.png', 73, 155, 95, 211)
-clear_comments(f'mem_corner/{card_name}_corner.mem')
-mem_to_png_edges(f'mem_corner/{card_name}_corner_processed.mem', 23, 10)
+#clear_comments(f'mem_corner/{card_name}_corner.mem')
+#mem_to_png_edges(f'mem_corner/{card_name}_corner_processed.mem', 23, 10)
+
+rank = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+suit = ['c', 'd', 'h', 's']
+
+for i in range(len(rank)):
+    #kernel_processer(f'images_kernels/{rank[i]}.png', 160, 40, 28)
+    kernel_maker(f'images_kernels/{rank[i]}_thresh.png')
+
+
+for i in range(len(suit)):
+    #kernel_processer(f'images_kernels/{suit[i]}.png', 160, 29, 28)
+    kernel_maker(f'images_kernels/{suit[i]}_thresh.png')

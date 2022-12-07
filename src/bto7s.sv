@@ -1,6 +1,3 @@
-`timescale 1ns / 1ps
-`default_nettype none
-
 module bto7s(
         input wire [3:0]   x_in,
         output logic [6:0] s_out
@@ -43,5 +40,3 @@ module bto7s(
   assign s_out[0] = sa;
   
 endmodule
-
-`default_nettype wire

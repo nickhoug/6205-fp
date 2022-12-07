@@ -74,6 +74,11 @@ module top_level(
 
   logic edges; 
 
+  logic zoom; 
+
+  logic [10:0] x_shift;  
+  logic [9:0] y_shift;   
+
   //vga_mux output:
   logic [11:0] mux_pixel; //final 12 bit information from vga multiplexer
   //goes right into RGB of output for video render
@@ -238,12 +243,6 @@ module top_level(
     .cam_out(full_pixel)
     );
 
-  seven_segment_controller mssc(.clk_in(clk_65mhz),
-                 .rst_in(btnc),
-                 .val_in(sw[15:8]),
-                 .cat_out({cag, caf, cae, cad, cac, cab, caa}),
-                 .an_out(an));
-
   //Latency: 0
   threshold grayscale (
      .r_in(full_pixel[15:11]), //TODO: needs to use pipelined signal (PS5) (DONE)
@@ -339,9 +338,19 @@ module top_level(
     end
   end
 
-  //Create Crosshair and edges
+  seven_segment_controller mssc(.clk_in(clk_65mhz),
+                 .rst_in(btnc),
+                 .val_in(y_shift*7/12),
+                 .cat_out({cag, caf, cae, cad, cac, cab, caa}),
+                 .an_out(an));
+
+  //Create Crosshair, edges, zoom
   assign crosshair = ((vcount==y_com)||(hcount==x_com));
   assign edges = ((hcount==left_edge+4)||(hcount==right_edge+4)||(vcount==top_edge)||(vcount==bot_edge));
+  assign zoom = ((hcount > left_edge+4) && (hcount <= left_edge+4+x_shift) && (vcount > top_edge) && (vcount < top_edge+ (y_shift*7/12))); 
+
+  assign x_shift =  (right_edge - left_edge) / 7 ; 
+  assign y_shift = (bot_edge - top_edge) / 4;
 
   vga_mux switch (
     .sel_in({sw[7:5], sw[3]}),
@@ -349,6 +358,7 @@ module top_level(
     .thresholded_pixel_in(mask),
     .crosshair_in(crosshair_pipe[3]), //TODO: needs to use pipelined signal (PS4) (DONE)
     .edge_in(edges), 
+    .zoom_in(zoom), 
     .pixel_out(mux_pixel));
 
   //Latency: 1
