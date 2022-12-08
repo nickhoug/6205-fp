@@ -532,6 +532,63 @@ module top_level(
     .ace_score(ace_score)
   );
 
+  logic [9:0] club_score; 
+  XOR_club club_kernel (
+    .clk(clk_65mhz), 
+    .rst(sys_rst), 
+    .hcount(hcount_pipe[4]), 
+    .vcount(vcount_pipe[4]),
+    .mask(mask), 
+
+    .left_edge(left_edge), 
+    .top_edge(top_edge), 
+
+    .club_score(club_score)
+  );
+
+  logic [9:0] spade_score; 
+  XOR_spade spade_kernel (
+    .clk(clk_65mhz), 
+    .rst(sys_rst), 
+    .hcount(hcount_pipe[4]), 
+    .vcount(vcount_pipe[4]),
+    .mask(mask), 
+
+    .left_edge(left_edge), 
+    .top_edge(top_edge), 
+
+    .spade_score(spade_score)
+  );
+
+  logic [9:0] heart_score; 
+  XOR_heart heart_kernel (
+    .clk(clk_65mhz), 
+    .rst(sys_rst), 
+    .hcount(hcount_pipe[4]), 
+    .vcount(vcount_pipe[4]),
+    .mask(mask), 
+
+    .left_edge(left_edge), 
+    .top_edge(top_edge), 
+
+    .heart_score(heart_score)
+  );
+
+  logic [9:0] diamond_score; 
+  XOR_diamond diamond_kernel (
+    .clk(clk_65mhz), 
+    .rst(sys_rst), 
+    .hcount(hcount_pipe[4]), 
+    .vcount(vcount_pipe[4]),
+    .mask(mask), 
+
+    .left_edge(left_edge), 
+    .top_edge(top_edge), 
+
+    .diamond_score(diamond_score)
+  );
+
+
   comparator best_score_calculator (
     .two_score(two_score),
     .three_score(three_score),
@@ -547,10 +604,10 @@ module top_level(
     .king_score(king_score),
     .ace_score(ace_score),
 
-    .spade_score(300), 
-    .diamond_score(300),
-    .heart_score(200),
-    .club_score(320),
+    .spade_score(spade_score), 
+    .diamond_score(diamond_score),
+    .heart_score(heart_score),
+    .club_score(club_score),
     
     .rank_score(rank_score), 
     .suit_score(suit_score),
