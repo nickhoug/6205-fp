@@ -4,7 +4,7 @@
   **** IP Build 3524634 on Mon Apr 18 20:55:01 MDT 2022
     ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 
-source /tmp/build.tcl.PPLkYZ
+source /tmp/build.tcl.Q8buL1
 # exec rm -rf .Xil .gen .srcs
 # set_param board.repoPaths /home/builder/.Xilinx/Vivado/2022.1/xhub/board_store/xilinx_board_store
 # xhub::refresh_catalog [xhub::get_xstores xilinx_board_store]
@@ -13,31 +13,28 @@ INFO: [xhubtcl 76-61] The object 'digilentinc.com:xilinx_board_store:nexys4_ddr:
 # set_part xc7a100tcsg324-1
 INFO: [Coretcl 2-1500] The part has been set to 'xc7a100tcsg324-1' for the current project only. Run set_part -help for more details. To evaluate different speed grades in the current design, use the set_speed_grade command, or use the open_checkpoint -part command to change the part used by an existing checkpoint design.
 # set_property board_part digilentinc.com:nexys4_ddr:part0:1.1 [current_project]
-# read_xdc /tmp/tmp.8QPn1W/xdc/top_level.xdc
-# read_verilog -sv /tmp/tmp.8QPn1W/src/clk_wiz_lab3.v
-# read_verilog -sv /tmp/tmp.8QPn1W/src/mirror.sv
-# read_verilog -sv /tmp/tmp.8QPn1W/src/card_math.sv
-# read_verilog -sv /tmp/tmp.8QPn1W/src/top_level.sv
-# read_verilog -sv /tmp/tmp.8QPn1W/src/bto7s_suit.sv
-# read_verilog -sv /tmp/tmp.8QPn1W/src/divider.sv
-# read_verilog -sv /tmp/tmp.8QPn1W/src/vga_mux.sv
-# read_verilog -sv /tmp/tmp.8QPn1W/src/edges.sv
-# read_verilog -sv /tmp/tmp.8QPn1W/src/card_mappings.sv
-# read_verilog -sv /tmp/tmp.8QPn1W/src/threshold.sv
-# read_verilog -sv /tmp/tmp.8QPn1W/src/xilinx_single_port_ram_read_first.v
-# read_verilog -sv /tmp/tmp.8QPn1W/src/camera.sv
-# read_verilog -sv /tmp/tmp.8QPn1W/src/bto7s.sv
-# read_verilog -sv /tmp/tmp.8QPn1W/src/xilinx_true_dual_port_read_first_2_clock_ram.v
-# read_verilog -sv /tmp/tmp.8QPn1W/src/kernels.sv
-# read_verilog -sv /tmp/tmp.8QPn1W/src/iverilog_hack_thresh.svh
-# read_verilog -sv /tmp/tmp.8QPn1W/src/iverilog_hack_test.svh
-# read_verilog -sv /tmp/tmp.8QPn1W/src/xilinx_true_dual_port_read_first_1_clock_ram.v
-# read_verilog -sv /tmp/tmp.8QPn1W/src/rotate.sv
-# read_verilog -sv /tmp/tmp.8QPn1W/src/vga.sv
-# read_verilog -sv /tmp/tmp.8QPn1W/src/center_of_mass.sv
-# read_verilog -sv /tmp/tmp.8QPn1W/src/scale.sv
-# read_verilog -sv /tmp/tmp.8QPn1W/src/seven_segment_controller.sv
-# read_verilog -sv /tmp/tmp.8QPn1W/src/bto7s_rank.sv
+# read_xdc /tmp/tmp.R4kAL2/xdc/top_level.xdc
+# read_verilog -sv /tmp/tmp.R4kAL2/src/clk_wiz_lab3.v
+# read_verilog -sv /tmp/tmp.R4kAL2/src/mirror.sv
+# read_verilog -sv /tmp/tmp.R4kAL2/src/card_math.sv
+# read_verilog -sv /tmp/tmp.R4kAL2/src/top_level.sv
+# read_verilog -sv /tmp/tmp.R4kAL2/src/bto7s_suit.sv
+# read_verilog -sv /tmp/tmp.R4kAL2/src/divider.sv
+# read_verilog -sv /tmp/tmp.R4kAL2/src/vga_mux.sv
+# read_verilog -sv /tmp/tmp.R4kAL2/src/edges.sv
+# read_verilog -sv /tmp/tmp.R4kAL2/src/threshold.sv
+# read_verilog -sv /tmp/tmp.R4kAL2/src/xilinx_single_port_ram_read_first.v
+# read_verilog -sv /tmp/tmp.R4kAL2/src/camera.sv
+# read_verilog -sv /tmp/tmp.R4kAL2/src/xilinx_true_dual_port_read_first_2_clock_ram.v
+# read_verilog -sv /tmp/tmp.R4kAL2/src/iverilog_hack_thresh.svh
+# read_verilog -sv /tmp/tmp.R4kAL2/src/iverilog_hack_test.svh
+# read_verilog -sv /tmp/tmp.R4kAL2/src/xilinx_true_dual_port_read_first_1_clock_ram.v
+# read_verilog -sv /tmp/tmp.R4kAL2/src/rotate.sv
+# read_verilog -sv /tmp/tmp.R4kAL2/src/vga.sv
+# read_verilog -sv /tmp/tmp.R4kAL2/src/center_of_mass.sv
+# read_verilog -sv /tmp/tmp.R4kAL2/src/scale.sv
+# read_verilog -sv /tmp/tmp.R4kAL2/src/seven_segment_controller.sv
+# read_verilog -sv /tmp/tmp.R4kAL2/src/bto7s_rank.sv
 # synth_design -top top_level -part xc7a100tcsg324-1
 Command: synth_design -top top_level -part xc7a100tcsg324-1
 Starting synth_design
@@ -46,25 +43,16 @@ INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a100
 INFO: [Device 21-403] Loading part xc7a100tcsg324-1
 INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 4 processes.
 INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
-INFO: [Synth 8-7075] Helper process launched with PID 1226594
-WARNING: [Synth 8-6901] identifier 'coeffs_i' is used before its declaration [/tmp/tmp.8QPn1W/src/kernels.sv:10]
-WARNING: [Synth 8-6901] identifier 'coeffs_i' is used before its declaration [/tmp/tmp.8QPn1W/src/kernels.sv:11]
-WARNING: [Synth 8-6901] identifier 'coeffs_i' is used before its declaration [/tmp/tmp.8QPn1W/src/kernels.sv:12]
-WARNING: [Synth 8-6901] identifier 'coeffs_i' is used before its declaration [/tmp/tmp.8QPn1W/src/kernels.sv:13]
-WARNING: [Synth 8-6901] identifier 'coeffs_i' is used before its declaration [/tmp/tmp.8QPn1W/src/kernels.sv:14]
-WARNING: [Synth 8-6901] identifier 'coeffs_i' is used before its declaration [/tmp/tmp.8QPn1W/src/kernels.sv:15]
-WARNING: [Synth 8-6901] identifier 'coeffs_i' is used before its declaration [/tmp/tmp.8QPn1W/src/kernels.sv:16]
-WARNING: [Synth 8-6901] identifier 'coeffs_i' is used before its declaration [/tmp/tmp.8QPn1W/src/kernels.sv:17]
-WARNING: [Synth 8-6901] identifier 'coeffs_i' is used before its declaration [/tmp/tmp.8QPn1W/src/kernels.sv:18]
-WARNING: [Synth 8-2254] instance name 'rank' matches net/port name [/tmp/tmp.8QPn1W/src/seven_segment_controller.sv:48]
-INFO: [Synth 8-6826] previous declaration of 'rank' is from here [/tmp/tmp.8QPn1W/src/seven_segment_controller.sv:9]
-WARNING: [Synth 8-2254] instance name 'suit' matches net/port name [/tmp/tmp.8QPn1W/src/seven_segment_controller.sv:49]
-INFO: [Synth 8-6826] previous declaration of 'suit' is from here [/tmp/tmp.8QPn1W/src/seven_segment_controller.sv:8]
+INFO: [Synth 8-7075] Helper process launched with PID 443774
+WARNING: [Synth 8-2254] instance name 'rank' matches net/port name [/tmp/tmp.R4kAL2/src/seven_segment_controller.sv:48]
+INFO: [Synth 8-6826] previous declaration of 'rank' is from here [/tmp/tmp.R4kAL2/src/seven_segment_controller.sv:9]
+WARNING: [Synth 8-2254] instance name 'suit' matches net/port name [/tmp/tmp.R4kAL2/src/seven_segment_controller.sv:49]
+INFO: [Synth 8-6826] previous declaration of 'suit' is from here [/tmp/tmp.R4kAL2/src/seven_segment_controller.sv:8]
 ---------------------------------------------------------------------------------
-Starting RTL Elaboration : Time (s): cpu = 00:00:03 ; elapsed = 00:00:04 . Memory (MB): peak = 2595.020 ; gain = 0.000 ; free physical = 261 ; free virtual = 6669
+Starting RTL Elaboration : Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 2598.984 ; gain = 0.000 ; free physical = 196 ; free virtual = 3668
 ---------------------------------------------------------------------------------
-INFO: [Synth 8-6157] synthesizing module 'top_level' [/tmp/tmp.8QPn1W/src/top_level.sv:4]
-INFO: [Synth 8-6157] synthesizing module 'clk_wiz_lab3' [/tmp/tmp.8QPn1W/src/clk_wiz_lab3.v:67]
+INFO: [Synth 8-6157] synthesizing module 'top_level' [/tmp/tmp.R4kAL2/src/top_level.sv:4]
+INFO: [Synth 8-6157] synthesizing module 'clk_wiz_lab3' [/tmp/tmp.R4kAL2/src/clk_wiz_lab3.v:67]
 INFO: [Synth 8-6157] synthesizing module 'IBUF' [/opt/Xilinx/Vivado/2022.1/scripts/rt/data/unisim_comp.v:55203]
 INFO: [Synth 8-6155] done synthesizing module 'IBUF' (0#1) [/opt/Xilinx/Vivado/2022.1/scripts/rt/data/unisim_comp.v:55203]
 INFO: [Synth 8-6157] synthesizing module 'MMCME2_ADV' [/opt/Xilinx/Vivado/2022.1/scripts/rt/data/unisim_comp.v:63509]
@@ -84,59 +72,53 @@ INFO: [Synth 8-6157] synthesizing module 'MMCME2_ADV' [/opt/Xilinx/Vivado/2022.1
 INFO: [Synth 8-6155] done synthesizing module 'MMCME2_ADV' (0#1) [/opt/Xilinx/Vivado/2022.1/scripts/rt/data/unisim_comp.v:63509]
 INFO: [Synth 8-6157] synthesizing module 'BUFG' [/opt/Xilinx/Vivado/2022.1/scripts/rt/data/unisim_comp.v:1082]
 INFO: [Synth 8-6155] done synthesizing module 'BUFG' (0#1) [/opt/Xilinx/Vivado/2022.1/scripts/rt/data/unisim_comp.v:1082]
-INFO: [Synth 8-6155] done synthesizing module 'clk_wiz_lab3' (0#1) [/tmp/tmp.8QPn1W/src/clk_wiz_lab3.v:67]
-INFO: [Synth 8-6157] synthesizing module 'vga' [/tmp/tmp.8QPn1W/src/vga.sv:18]
-INFO: [Synth 8-6155] done synthesizing module 'vga' (0#1) [/tmp/tmp.8QPn1W/src/vga.sv:18]
-INFO: [Synth 8-6157] synthesizing module 'camera' [/tmp/tmp.8QPn1W/src/camera.sv:4]
-INFO: [Synth 8-155] case statement is not full and has no default [/tmp/tmp.8QPn1W/src/camera.sv:45]
-INFO: [Synth 8-6155] done synthesizing module 'camera' (0#1) [/tmp/tmp.8QPn1W/src/camera.sv:4]
-INFO: [Synth 8-6157] synthesizing module 'rotate' [/tmp/tmp.8QPn1W/src/rotate.sv:1]
-INFO: [Synth 8-6155] done synthesizing module 'rotate' (0#1) [/tmp/tmp.8QPn1W/src/rotate.sv:1]
-INFO: [Synth 8-6157] synthesizing module 'xilinx_true_dual_port_read_first_2_clock_ram' [/tmp/tmp.8QPn1W/src/xilinx_true_dual_port_read_first_2_clock_ram.v:12]
+INFO: [Synth 8-6155] done synthesizing module 'clk_wiz_lab3' (0#1) [/tmp/tmp.R4kAL2/src/clk_wiz_lab3.v:67]
+INFO: [Synth 8-6157] synthesizing module 'vga' [/tmp/tmp.R4kAL2/src/vga.sv:18]
+INFO: [Synth 8-6155] done synthesizing module 'vga' (0#1) [/tmp/tmp.R4kAL2/src/vga.sv:18]
+INFO: [Synth 8-6157] synthesizing module 'camera' [/tmp/tmp.R4kAL2/src/camera.sv:4]
+INFO: [Synth 8-155] case statement is not full and has no default [/tmp/tmp.R4kAL2/src/camera.sv:45]
+INFO: [Synth 8-6155] done synthesizing module 'camera' (0#1) [/tmp/tmp.R4kAL2/src/camera.sv:4]
+INFO: [Synth 8-6157] synthesizing module 'rotate' [/tmp/tmp.R4kAL2/src/rotate.sv:1]
+INFO: [Synth 8-6155] done synthesizing module 'rotate' (0#1) [/tmp/tmp.R4kAL2/src/rotate.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'xilinx_true_dual_port_read_first_2_clock_ram' [/tmp/tmp.R4kAL2/src/xilinx_true_dual_port_read_first_2_clock_ram.v:12]
 	Parameter RAM_WIDTH bound to: 16 - type: integer 
 	Parameter RAM_DEPTH bound to: 76800 - type: integer 
-WARNING: [Synth 8-6896] loop limit (65536) exceeded inside initial block, initial block items will be ignored [/tmp/tmp.8QPn1W/src/xilinx_true_dual_port_read_first_2_clock_ram.v:57]
-INFO: [Synth 8-6155] done synthesizing module 'xilinx_true_dual_port_read_first_2_clock_ram' (0#1) [/tmp/tmp.8QPn1W/src/xilinx_true_dual_port_read_first_2_clock_ram.v:12]
-INFO: [Synth 8-6157] synthesizing module 'mirror' [/tmp/tmp.8QPn1W/src/mirror.sv:4]
-INFO: [Synth 8-6155] done synthesizing module 'mirror' (0#1) [/tmp/tmp.8QPn1W/src/mirror.sv:4]
-INFO: [Synth 8-6157] synthesizing module 'scale' [/tmp/tmp.8QPn1W/src/scale.sv:4]
-INFO: [Synth 8-6155] done synthesizing module 'scale' (0#1) [/tmp/tmp.8QPn1W/src/scale.sv:4]
-INFO: [Synth 8-6157] synthesizing module 'threshold' [/tmp/tmp.8QPn1W/src/threshold.sv:1]
-INFO: [Synth 8-6155] done synthesizing module 'threshold' (0#1) [/tmp/tmp.8QPn1W/src/threshold.sv:1]
-INFO: [Synth 8-6157] synthesizing module 'xilinx_true_dual_port_read_first_2_clock_ram__parameterized0' [/tmp/tmp.8QPn1W/src/xilinx_true_dual_port_read_first_2_clock_ram.v:12]
+WARNING: [Synth 8-6896] loop limit (65536) exceeded inside initial block, initial block items will be ignored [/tmp/tmp.R4kAL2/src/xilinx_true_dual_port_read_first_2_clock_ram.v:57]
+INFO: [Synth 8-6155] done synthesizing module 'xilinx_true_dual_port_read_first_2_clock_ram' (0#1) [/tmp/tmp.R4kAL2/src/xilinx_true_dual_port_read_first_2_clock_ram.v:12]
+INFO: [Synth 8-6157] synthesizing module 'mirror' [/tmp/tmp.R4kAL2/src/mirror.sv:4]
+INFO: [Synth 8-6155] done synthesizing module 'mirror' (0#1) [/tmp/tmp.R4kAL2/src/mirror.sv:4]
+INFO: [Synth 8-6157] synthesizing module 'scale' [/tmp/tmp.R4kAL2/src/scale.sv:4]
+INFO: [Synth 8-6155] done synthesizing module 'scale' (0#1) [/tmp/tmp.R4kAL2/src/scale.sv:4]
+INFO: [Synth 8-6157] synthesizing module 'threshold' [/tmp/tmp.R4kAL2/src/threshold.sv:1]
+INFO: [Synth 8-6155] done synthesizing module 'threshold' (0#1) [/tmp/tmp.R4kAL2/src/threshold.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'xilinx_true_dual_port_read_first_2_clock_ram__parameterized0' [/tmp/tmp.R4kAL2/src/xilinx_true_dual_port_read_first_2_clock_ram.v:12]
 	Parameter RAM_WIDTH bound to: 1 - type: integer 
 	Parameter RAM_DEPTH bound to: 307200 - type: integer 
-WARNING: [Synth 8-6896] loop limit (65536) exceeded inside initial block, initial block items will be ignored [/tmp/tmp.8QPn1W/src/xilinx_true_dual_port_read_first_2_clock_ram.v:57]
-INFO: [Synth 8-6155] done synthesizing module 'xilinx_true_dual_port_read_first_2_clock_ram__parameterized0' (0#1) [/tmp/tmp.8QPn1W/src/xilinx_true_dual_port_read_first_2_clock_ram.v:12]
-WARNING: [Synth 8-689] width (32) of port connection 'addra' does not match port width (19) of module 'xilinx_true_dual_port_read_first_2_clock_ram__parameterized0' [/tmp/tmp.8QPn1W/src/top_level.sv:260]
-INFO: [Synth 8-6157] synthesizing module 'center_of_mass' [/tmp/tmp.8QPn1W/src/center_of_mass.sv:4]
-INFO: [Synth 8-6157] synthesizing module 'divider' [/tmp/tmp.8QPn1W/src/divider.sv:4]
+WARNING: [Synth 8-6896] loop limit (65536) exceeded inside initial block, initial block items will be ignored [/tmp/tmp.R4kAL2/src/xilinx_true_dual_port_read_first_2_clock_ram.v:57]
+INFO: [Synth 8-6155] done synthesizing module 'xilinx_true_dual_port_read_first_2_clock_ram__parameterized0' (0#1) [/tmp/tmp.R4kAL2/src/xilinx_true_dual_port_read_first_2_clock_ram.v:12]
+WARNING: [Synth 8-689] width (32) of port connection 'addra' does not match port width (19) of module 'xilinx_true_dual_port_read_first_2_clock_ram__parameterized0' [/tmp/tmp.R4kAL2/src/top_level.sv:260]
+INFO: [Synth 8-6157] synthesizing module 'center_of_mass' [/tmp/tmp.R4kAL2/src/center_of_mass.sv:4]
+INFO: [Synth 8-6157] synthesizing module 'divider' [/tmp/tmp.R4kAL2/src/divider.sv:4]
 	Parameter WIDTH bound to: 29 - type: integer 
-INFO: [Synth 8-6155] done synthesizing module 'divider' (0#1) [/tmp/tmp.8QPn1W/src/divider.sv:4]
-INFO: [Synth 8-6155] done synthesizing module 'center_of_mass' (0#1) [/tmp/tmp.8QPn1W/src/center_of_mass.sv:4]
-INFO: [Synth 8-6157] synthesizing module 'edges' [/tmp/tmp.8QPn1W/src/edges.sv:19]
+INFO: [Synth 8-6155] done synthesizing module 'divider' (0#1) [/tmp/tmp.R4kAL2/src/divider.sv:4]
+INFO: [Synth 8-6155] done synthesizing module 'center_of_mass' (0#1) [/tmp/tmp.R4kAL2/src/center_of_mass.sv:4]
+INFO: [Synth 8-6157] synthesizing module 'edges' [/tmp/tmp.R4kAL2/src/edges.sv:19]
 	Parameter HEIGHT bound to: 640 - type: integer 
 	Parameter WIDTH bound to: 480 - type: integer 
-INFO: [Synth 8-6155] done synthesizing module 'edges' (0#1) [/tmp/tmp.8QPn1W/src/edges.sv:19]
-WARNING: [Synth 8-689] width (11) of port connection 'x_center' does not match port width (9) of module 'edges' [/tmp/tmp.8QPn1W/src/top_level.sv:300]
-WARNING: [Synth 8-689] width (11) of port connection 'right_edge' does not match port width (9) of module 'edges' [/tmp/tmp.8QPn1W/src/top_level.sv:307]
-WARNING: [Synth 8-689] width (11) of port connection 'left_edge' does not match port width (9) of module 'edges' [/tmp/tmp.8QPn1W/src/top_level.sv:308]
-INFO: [Synth 8-6157] synthesizing module 'seven_segment_controller' [/tmp/tmp.8QPn1W/src/seven_segment_controller.sv:4]
-INFO: [Synth 8-6157] synthesizing module 'bto7s' [/tmp/tmp.8QPn1W/src/bto7s.sv:1]
-INFO: [Synth 8-6155] done synthesizing module 'bto7s' (0#1) [/tmp/tmp.8QPn1W/src/bto7s.sv:1]
-INFO: [Synth 8-6157] synthesizing module 'bto7s_rank' [/tmp/tmp.8QPn1W/src/bto7s_rank.sv:4]
-INFO: [Synth 8-6155] done synthesizing module 'bto7s_rank' (0#1) [/tmp/tmp.8QPn1W/src/bto7s_rank.sv:4]
-ERROR: [Synth 8-448] named port connection 'x_in' does not exist for instance 'rank' of module 'bto7s_rank' [/tmp/tmp.8QPn1W/src/seven_segment_controller.sv:48]
-INFO: [Synth 8-6157] synthesizing module 'bto7s_suit' [/tmp/tmp.8QPn1W/src/bto7s_suit.sv:4]
-ERROR: [Synth 8-6156] failed synthesizing module 'bto7s_suit' [/tmp/tmp.8QPn1W/src/bto7s_suit.sv:4]
-ERROR: [Synth 8-6156] failed synthesizing module 'seven_segment_controller' [/tmp/tmp.8QPn1W/src/seven_segment_controller.sv:4]
-ERROR: [Synth 8-6156] failed synthesizing module 'top_level' [/tmp/tmp.8QPn1W/src/top_level.sv:4]
+INFO: [Synth 8-6155] done synthesizing module 'edges' (0#1) [/tmp/tmp.R4kAL2/src/edges.sv:19]
+WARNING: [Synth 8-689] width (11) of port connection 'x_center' does not match port width (9) of module 'edges' [/tmp/tmp.R4kAL2/src/top_level.sv:300]
+WARNING: [Synth 8-689] width (11) of port connection 'right_edge' does not match port width (9) of module 'edges' [/tmp/tmp.R4kAL2/src/top_level.sv:307]
+WARNING: [Synth 8-689] width (11) of port connection 'left_edge' does not match port width (9) of module 'edges' [/tmp/tmp.R4kAL2/src/top_level.sv:308]
+INFO: [Synth 8-6157] synthesizing module 'seven_segment_controller' [/tmp/tmp.R4kAL2/src/seven_segment_controller.sv:4]
+ERROR: [Synth 8-439] module 'bto7s' not found [/tmp/tmp.R4kAL2/src/seven_segment_controller.sv:47]
+ERROR: [Synth 8-6156] failed synthesizing module 'seven_segment_controller' [/tmp/tmp.R4kAL2/src/seven_segment_controller.sv:4]
+ERROR: [Synth 8-6156] failed synthesizing module 'top_level' [/tmp/tmp.R4kAL2/src/top_level.sv:4]
 ---------------------------------------------------------------------------------
-Finished RTL Elaboration : Time (s): cpu = 00:00:08 ; elapsed = 00:00:08 . Memory (MB): peak = 2595.020 ; gain = 0.000 ; free physical = 1120 ; free virtual = 7528
+Finished RTL Elaboration : Time (s): cpu = 00:00:09 ; elapsed = 00:00:09 . Memory (MB): peak = 2598.984 ; gain = 0.000 ; free physical = 1056 ; free virtual = 4528
 ---------------------------------------------------------------------------------
 RTL Elaboration failed
 INFO: [Common 17-83] Releasing license: Synthesis
-46 Infos, 17 Warnings, 0 Critical Warnings and 5 Errors encountered.
+41 Infos, 8 Warnings, 0 Critical Warnings and 4 Errors encountered.
 synth_design failed
 ERROR: [Common 17-69] Command failed: Synthesis failed - please see the console or run log file for details
-INFO: [Common 17-206] Exiting Vivado at Wed Dec  7 15:58:40 2022...
+INFO: [Common 17-206] Exiting Vivado at Wed Dec  7 20:18:49 2022...

@@ -28,19 +28,19 @@ module seven_segment_controller #(parameter COUNT_TO = 'd100_000)
       routed_vals <= 4'b0000;
     end 
     if (segment_state == 8'b0000_1000) begin //suit_score (ones)
-      routed_vals <= suit_score - suit_score/10; 
+      routed_vals <= suit_score - suit_score/4'd10; 
     end 
     if (segment_state == 8'b0001_0000) begin //suit_score (tens)
-      routed_vals <= suit_score/10;
+      routed_vals <= suit_score/4'd10;
     end 
     if (segment_state == 8'b0010_0000) begin //0
       routed_vals <= 4'b0000;
     end 
     if (segment_state == 8'b0100_0000) begin //rank_score (ones)
-      routed_vals <= rank_score - rank_score/10;
+      routed_vals <= rank_score - rank_score/4'd10;
     end 
     if (segment_state == 8'b1000_0000) begin //rank_score (tens)
-      routed_vals <= rank_score/10;
+      routed_vals <= rank_score/4'd10;
     end 
   end
 
