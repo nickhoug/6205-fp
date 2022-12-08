@@ -19,6 +19,8 @@ machine = "eecs-digital-56.mit.edu"
 projectdir = "."
 of = "obj"
 
+sourcepath = 'src'
+
 p = False
 
 user = "builder"
@@ -44,8 +46,9 @@ routerpt = [
 
 usagestr = f"""
 {progname}: build SystemVerilog code remotely for 2022 6.205 labs
-usage: {progname} [-dqv] [-m machine] [-p projectdir] [-o dir]
+usage: {progname} [-5dqv] [-m machine] [-p projectdir] [-o dir]
 options:
+	-5: use hdl/ instead of src/ to search for source files
 	-d: emit additional diagnostics during synthesis/implementation
 	-q: quiet: do not generate any vivado logs except for errors.
 	-v: be verbose (for debugging stuffs / if you see a bug)
@@ -70,9 +73,10 @@ def getargs():
 	global projectdir
 	global of
 	global verbose
+	global sourcepath
 
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], "dm:o:p:qv")
+		opts, args = getopt.getopt(sys.argv[1:], "5dm:o:p:qv")
 	except getopt.GetoptError as err:
 		print(err)
 		usage()
@@ -85,10 +89,12 @@ def getargs():
 		elif o == '-p': projectdir = v
 		elif o == '-o': of = v
 		elif o == '-v': verbose = True
+		elif o == '-5': sourcepath = 'hdl'
 		else:
 			print(f"unrecognized option {o}")
 			usage()
 
+	debuglog(f"source path is {sourcepath}")
 	outfile = f"{of}/out.bit"
 	logfile = f"{of}/build.log"
 
@@ -98,8 +104,9 @@ def make_posix(path):
 def regfiles():
 	ftt = {}
 	debuglog(f"projectdir is {projectdir}")
+
 	for dirpath, subdirs, files in os.walk(projectdir):
-		if 'src' not in dirpath and 'xdc' not in dirpath and 'data' not in dirpath:
+		if sourcepath not in dirpath and 'xdc' not in dirpath and 'data' not in dirpath:
 			continue 
 		if dirpath.startswith("./"): dirpath = dirpath[2:]
 		for file in files:

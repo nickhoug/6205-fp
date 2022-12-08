@@ -338,11 +338,37 @@ module top_level(
     end
   end
 
-  seven_segment_controller mssc(.clk_in(clk_65mhz),
-                 .rst_in(btnc),
-                 .val_in(y_shift*7/12),
-                 .cat_out({cag, caf, cae, cad, cac, cab, caa}),
-                 .an_out(an));
+  seven_segment_controller display (
+    .clk_in(clk_65mhz),
+    .rst_in(sys_rst),
+
+    .suit(card_map[5:4]),  
+    .rank(card_map[3:0]), 
+    .suit_score(suit_score), 
+    .rank_score(rank_score),
+
+    .cat_out({cag, caf, cae, cad, cac, cab, caa}),
+    .an_out(an)); 
+
+  logic [6:0] rank_score; 
+  logic [6:0] suit_score; 
+  logic [5:0] card_map;
+  
+  card_math XOR_operation (
+    .clk(clk_65mhz), 
+    .rst(sys_rst), 
+    .hcount(hcount_pipe[4]), 
+    .vcount(vcount_pipe[4]), 
+    .mask(mask), 
+
+    .right_edge(right_edge), 
+    .left_edge(left_edge),
+    .top_edge(top_edge),
+    .bot_edge(bot_edge),
+    
+    .rank_score(rank_score),
+    .suit_score(suit_score),
+    .card_map(card_map));
 
   //Create Crosshair, edges, zoom
   assign crosshair = ((vcount==y_com)||(hcount==x_com));

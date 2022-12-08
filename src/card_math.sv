@@ -8,8 +8,8 @@ module card_math #(
     parameter rank_height = 40, 
     parameter suit_height = 29)(
 
-    input wire clk; 
-    input wire rst; 
+    input wire clk,
+    input wire rst,
     input wire [10:0] hcount, 
     input wire [9:0] vcount, 
     input wire mask, 
@@ -17,11 +17,11 @@ module card_math #(
     input wire [$clog2(WIDTH) - 1: 0] right_edge, 
     input wire [$clog2(WIDTH) - 1: 0] left_edge,
     input wire [$clog2(HEIGHT) - 1: 0] top_edge,
-    input wire [$clog2(HEIGHT) - 1: 0] bot_edge
+    input wire [$clog2(HEIGHT) - 1: 0] bot_edge,
     
-    output logic [6:0] rank_score; 
-    output logic [6:0] suit_score;
-    output logic [5:0] card_map; 
+    output logic [6:0] rank_score, 
+    output logic [6:0] suit_score,
+    output logic [5:0] card_map 
   );
 
 logic [3:0] ace_map = 4'b0001; 
@@ -132,19 +132,19 @@ assign heart_score_array       = heart ^ suit;
 assign club_score_array        = club ^ suit; 
 
 assign card_map = {output_rank_map, output_rank_map};
-assign rank_score = 100 - (output_rank_score * 100) / (corner_width * rank_height) //should be percentage where 100% is perfect
-assign suit_score = 100 - (output_suit_score * 100) / (corner_width * suit_height)
+assign rank_score = 100 - (output_rank_score * 100) / (corner_width * rank_height); //should be percentage where 100% is perfect
+assign suit_score = 100 - (output_suit_score * 100) / (corner_width * suit_height);
 
 always_ff @(posedge clk) begin : update
-  if (hcount > left_edge + 4) && (hcount <= left_edge + 4 + corner_width) && (vcount > top_edge) && (vcount < top_edge + rank_height) begin 
+  if ((hcount > (left_edge + 4)) && (hcount <= (left_edge + 4 + corner_width)) && (vcount > top_edge) && (vcount < (top_edge + rank_height))) begin 
     rank[index_rank] <= mask;
     index_rank <= index_rank - 1; 
   end 
-  if (hcount > left_edge + 4) && (hcount <= left_edge + 4 + corner_width) && (vcount >= top_edge + rank_height) && (vcount < top_edge + rank_height + suit_height) begin 
+  if ((hcount > (left_edge + 4)) && (hcount <= (left_edge + 4 + corner_width)) && (vcount >= (top_edge + rank_height)) && (vcount < (top_edge + rank_height + suit_height))) begin 
     suit[index_suit] <= mask;
     index_suit <= index_suit - 1;
   end
-  if ((hcount <= left_edge + 4 + corner_width) && (vcount < top_edge + rank_height + suit_height)) begin 
+  if ((hcount > (left_edge + 4 + corner_width)) && (vcount > (top_edge + rank_height + suit_height))) begin 
     index_rank <= 11'd1119; 
     index_suit <= 10'd811;
   end 
@@ -156,7 +156,7 @@ always_ff @(posedge clk) begin : update
   end 
 end
 
-always_comb begin: scoring //higher score is bad -> need to find the lowest!
+always_comb begin : scoring //higher score is bad -> need to find the lowest!
   for (integer i = 0; i < 1120; i = i + 1) begin 
     two_score = two_score + two_score_array[i];
     three_score = three_score + three_score_array[i];
@@ -378,7 +378,7 @@ always_comb begin : rank_ranking
   end
 end
 
-always_comb begin: suit_ranking
+always_comb begin : suit_ranking
   if ((club_score < spade_score) && 
       (club_score < heart_score) && 
       (club_score < diamond_score)) begin 

@@ -45,8 +45,8 @@ module seven_segment_controller #(parameter COUNT_TO = 'd100_000)
   end
 
   bto7s basic_numbers (.x_in(routed_vals), .s_out(led_out_basic));
-  bto7s_rank rank     (.x_in(rank), .s_out(led_out_rank));
-  bto7s_suit suit     (.x_in(suit), .s_out(led_out_suit));
+  bto7s_rank rank     (.rank(rank), .s_out(led_out_rank));
+  bto7s_suit suit     (.suit(suit), .s_out(led_out_suit));
 
   always_comb begin : led_out_route
     if (segment_state == 8'b0000_0001) begin 
