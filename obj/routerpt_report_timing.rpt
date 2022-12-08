@@ -1,0 +1,154 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2022.1 (lin64) Build 3526262 Mon Apr 18 15:47:01 MDT 2022
+| Date         : Wed Dec  7 21:26:49 2022
+| Host         : EECS-DIGITAL-18 running 64-bit Ubuntu 20.04.5 LTS
+| Command      : report_timing -file /tmp/tmp.1CD8Sd/obj/routerpt_report_timing.rpt
+| Design       : top_level
+| Device       : 7a100t-csg324
+| Speed File   : -1  PRODUCTION 1.23 2018-06-13
+------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (VIOLATED) :        -0.756ns  (required time - arrival time)
+  Source:                 right_edge_reg[0]_replica/C
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@7.692ns period=15.385ns})
+  Destination:            vga_b_reg[0]/R
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@7.692ns period=15.385ns})
+  Path Group:             clk_out1_clk_wiz_0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            15.385ns  (clk_out1_clk_wiz_0 rise@15.385ns - clk_out1_clk_wiz_0 rise@0.000ns)
+  Data Path Delay:        15.197ns  (logic 8.516ns (56.036%)  route 6.681ns (43.964%))
+  Logic Levels:           29  (CARRY4=20 LUT1=1 LUT2=2 LUT3=2 LUT4=2 LUT6=2)
+  Clock Path Skew:        -0.289ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    -1.506ns = ( 13.878 - 15.385 ) 
+    Source Clock Delay      (SCD):    -0.730ns
+    Clock Pessimism Removal (CPR):    0.487ns
+  Clock Uncertainty:      0.130ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.251ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                      0.000     0.000 r  
+    E3                                                0.000     0.000 r  clk_100mhz (IN)
+                         net (fo=0)                   0.000     0.000    clk_gen/clk_100mhz
+    E3                   IBUF (Prop_ibuf_I_O)         1.482     1.482 r  clk_gen/clkin1_ibufg/O
+                         net (fo=1, routed)           1.233     2.715    clk_gen/clk_in1_clk_wiz_0
+    MMCME2_ADV_X1Y2      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -7.070    -4.355 r  clk_gen/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.719    -2.636    clk_gen/clk_out1_clk_wiz_0
+    BUFGCTRL_X0Y16       BUFG (Prop_bufg_I_O)         0.096    -2.540 r  clk_gen/clkout1_buf/O
+                         net (fo=3090, routed)        1.810    -0.730    clk_65mhz
+    SLICE_X43Y46         FDRE                                         r  right_edge_reg[0]_replica/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X43Y46         FDRE (Prop_fdre_C_Q)         0.456    -0.274 r  right_edge_reg[0]_replica/Q
+                         net (fo=2, routed)           0.591     0.317    right_edge[0]_repN
+    SLICE_X41Y46         LUT2 (Prop_lut2_I0_O)        0.124     0.441 r  vga_r[2]_i_241/O
+                         net (fo=1, routed)           0.000     0.441    vga_r[2]_i_241_n_0
+    SLICE_X41Y46         CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532     0.973 r  vga_r_reg[2]_i_208/CO[3]
+                         net (fo=1, routed)           0.000     0.973    vga_r_reg[2]_i_208_n_0
+    SLICE_X41Y47         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     1.087 r  vga_r_reg[2]_i_166/CO[3]
+                         net (fo=1, routed)           0.000     1.087    vga_r_reg[2]_i_166_n_0
+    SLICE_X41Y48         CARRY4 (Prop_carry4_CI_O[0])
+                                                      0.222     1.309 r  vga_r_reg[2]_i_131/O[0]
+                         net (fo=19, routed)          0.613     1.923    x_shift0[8]
+    SLICE_X40Y46         LUT3 (Prop_lut3_I2_O)        0.299     2.222 r  vga_r[2]_i_255/O
+                         net (fo=6, routed)           0.715     2.937    vga_r[2]_i_255_n_0
+    SLICE_X42Y45         LUT4 (Prop_lut4_I0_O)        0.124     3.061 r  vga_r[2]_i_343/O
+                         net (fo=1, routed)           0.000     3.061    vga_r[2]_i_343_n_0
+    SLICE_X42Y45         CARRY4 (Prop_carry4_S[3]_CO[3])
+                                                      0.376     3.437 r  vga_r_reg[2]_i_316/CO[3]
+                         net (fo=1, routed)           0.000     3.437    vga_r_reg[2]_i_316_n_0
+    SLICE_X42Y46         CARRY4 (Prop_carry4_CI_O[3])
+                                                      0.315     3.752 r  vga_r_reg[2]_i_291/O[3]
+                         net (fo=3, routed)           0.811     4.563    vga_r_reg[2]_i_291_n_4
+    SLICE_X44Y48         LUT3 (Prop_lut3_I0_O)        0.307     4.870 r  vga_r[2]_i_248/O
+                         net (fo=1, routed)           0.190     5.059    vga_r[2]_i_248_n_0
+    SLICE_X45Y48         CARRY4 (Prop_carry4_DI[1]_CO[3])
+                                                      0.507     5.566 r  vga_r_reg[2]_i_214/CO[3]
+                         net (fo=1, routed)           0.000     5.566    vga_r_reg[2]_i_214_n_0
+    SLICE_X45Y49         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     5.680 r  vga_r_reg[2]_i_185/CO[3]
+                         net (fo=1, routed)           0.001     5.681    vga_r_reg[2]_i_185_n_0
+    SLICE_X45Y50         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.334     6.015 f  vga_r_reg[2]_i_155/O[1]
+                         net (fo=5, routed)           0.696     6.711    vga_r_reg[2]_i_155_n_6
+    SLICE_X44Y49         LUT1 (Prop_lut1_I0_O)        0.303     7.014 r  vga_r[2]_i_281/O
+                         net (fo=1, routed)           0.000     7.014    vga_r[2]_i_281_n_0
+    SLICE_X44Y49         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.550     7.564 r  vga_r_reg[2]_i_233/CO[3]
+                         net (fo=1, routed)           0.001     7.565    vga_r_reg[2]_i_233_n_0
+    SLICE_X44Y50         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     7.679 r  vga_r_reg[2]_i_203/CO[3]
+                         net (fo=1, routed)           0.000     7.679    vga_r_reg[2]_i_203_n_0
+    SLICE_X44Y51         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     7.793 r  vga_r_reg[2]_i_165/CO[3]
+                         net (fo=1, routed)           0.000     7.793    vga_r_reg[2]_i_165_n_0
+    SLICE_X44Y52         CARRY4 (Prop_carry4_CI_CO[0])
+                                                      0.271     8.064 f  vga_r_reg[2]_i_130/CO[0]
+                         net (fo=49, routed)          0.798     8.862    vga_r_reg[2]_i_130_n_3
+    SLICE_X43Y50         LUT2 (Prop_lut2_I0_O)        0.373     9.235 r  vga_r[2]_i_305/O
+                         net (fo=1, routed)           0.000     9.235    vga_r[2]_i_305_n_0
+    SLICE_X43Y50         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.550     9.785 r  vga_r_reg[2]_i_270/CO[3]
+                         net (fo=1, routed)           0.000     9.785    vga_r_reg[2]_i_270_n_0
+    SLICE_X43Y51         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     9.899 r  vga_r_reg[2]_i_224/CO[3]
+                         net (fo=1, routed)           0.000     9.899    vga_r_reg[2]_i_224_n_0
+    SLICE_X43Y52         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    10.013 r  vga_r_reg[2]_i_194/CO[3]
+                         net (fo=1, routed)           0.000    10.013    vga_r_reg[2]_i_194_n_0
+    SLICE_X43Y53         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    10.127 r  vga_r_reg[2]_i_156/CO[3]
+                         net (fo=1, routed)           0.000    10.127    vga_r_reg[2]_i_156_n_0
+    SLICE_X43Y54         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    10.241 r  vga_r_reg[2]_i_129/CO[3]
+                         net (fo=10, routed)          0.866    11.108    vga_r_reg[2]_i_129_n_0
+    SLICE_X42Y53         LUT6 (Prop_lut6_I4_O)        0.124    11.232 r  vga_r[2]_i_121/O
+                         net (fo=1, routed)           0.000    11.232    vga_r[2]_i_121_n_0
+    SLICE_X42Y53         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.533    11.765 r  vga_r_reg[2]_i_93/CO[3]
+                         net (fo=1, routed)           0.000    11.765    vga_r_reg[2]_i_93_n_0
+    SLICE_X42Y54         CARRY4 (Prop_carry4_CI_O[0])
+                                                      0.219    11.984 r  vga_r_reg[2]_i_64/O[0]
+                         net (fo=2, routed)           0.737    12.721    vga_gen/zoom3[8]
+    SLICE_X42Y56         LUT4 (Prop_lut4_I2_O)        0.295    13.016 r  vga_gen/vga_r[2]_i_21/O
+                         net (fo=1, routed)           0.000    13.016    vga_gen/vga_r[2]_i_21_n_0
+    SLICE_X42Y56         CARRY4 (Prop_carry4_S[0]_CO[1])
+                                                      0.458    13.474 f  vga_gen/vga_r_reg[2]_i_6/CO[1]
+                         net (fo=2, routed)           0.322    13.796    vga_gen/CO[0]
+    SLICE_X42Y57         LUT6 (Prop_lut6_I4_O)        0.332    14.128 r  vga_gen/vga_r[2]_i_1_comp/O
+                         net (fo=8, routed)           0.339    14.468    vga_gen_n_41
+    SLICE_X42Y58         FDRE                                         r  vga_b_reg[0]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                     15.385    15.385 r  
+    E3                                                0.000    15.385 r  clk_100mhz (IN)
+                         net (fo=0)                   0.000    15.385    clk_gen/clk_100mhz
+    E3                   IBUF (Prop_ibuf_I_O)         1.411    16.796 r  clk_gen/clkin1_ibufg/O
+                         net (fo=1, routed)           1.162    17.958    clk_gen/clk_in1_clk_wiz_0
+    MMCME2_ADV_X1Y2      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -7.324    10.634 r  clk_gen/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.639    12.273    clk_gen/clk_out1_clk_wiz_0
+    BUFGCTRL_X0Y16       BUFG (Prop_bufg_I_O)         0.091    12.364 r  clk_gen/clkout1_buf/O
+                         net (fo=3090, routed)        1.514    13.878    clk_65mhz
+    SLICE_X42Y58         FDRE                                         r  vga_b_reg[0]/C
+                         clock pessimism              0.487    14.366    
+                         clock uncertainty           -0.130    14.236    
+    SLICE_X42Y58         FDRE (Setup_fdre_C_R)       -0.524    13.712    vga_b_reg[0]
+  -------------------------------------------------------------------
+                         required time                         13.712    
+                         arrival time                         -14.468    
+  -------------------------------------------------------------------
+                         slack                                 -0.756    
+
+
+
+

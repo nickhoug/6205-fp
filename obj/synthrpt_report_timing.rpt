@@ -1,0 +1,155 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2022.1 (lin64) Build 3526262 Mon Apr 18 15:47:01 MDT 2022
+| Date         : Wed Dec  7 21:25:29 2022
+| Host         : EECS-DIGITAL-18 running 64-bit Ubuntu 20.04.5 LTS
+| Command      : report_timing -file /tmp/tmp.1CD8Sd/obj/synthrpt_report_timing.rpt
+| Design       : top_level
+| Device       : 7a100t-csg324
+| Speed File   : -1  PRODUCTION 1.23 2018-06-13
+------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (VIOLATED) :        -1.677ns  (required time - arrival time)
+  Source:                 right_edge_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@7.692ns period=15.385ns})
+  Destination:            vga_b_reg[0]/R
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@7.692ns period=15.385ns})
+  Path Group:             clk_out1_clk_wiz_0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            15.385ns  (clk_out1_clk_wiz_0 rise@15.385ns - clk_out1_clk_wiz_0 rise@0.000ns)
+  Data Path Delay:        16.229ns  (logic 9.049ns (55.758%)  route 7.180ns (44.242%))
+  Logic Levels:           30  (CARRY4=19 LUT2=2 LUT3=4 LUT4=3 LUT6=2)
+  Clock Path Skew:        -0.145ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    -2.238ns = ( 13.147 - 15.385 ) 
+    Source Clock Delay      (SCD):    -1.562ns
+    Clock Pessimism Removal (CPR):    0.531ns
+  Clock Uncertainty:      0.130ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.251ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                      0.000     0.000 r  
+    E3                                                0.000     0.000 r  clk_100mhz (IN)
+                         net (fo=0)                   0.000     0.000    clk_gen/clk_100mhz
+    E3                   IBUF (Prop_ibuf_I_O)         1.482     1.482 r  clk_gen/clkin1_ibufg/O
+                         net (fo=1, unplaced)         0.584     2.066    clk_gen/clk_in1_clk_wiz_0
+                         MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -5.111    -3.045 r  clk_gen/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, unplaced)         0.803    -2.242    clk_gen/clk_out1_clk_wiz_0
+                         BUFG (Prop_bufg_I_O)         0.096    -2.146 r  clk_gen/clkout1_buf/O
+                         net (fo=3083, unplaced)      0.584    -1.562    clk_65mhz
+                         FDRE                                         r  right_edge_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+                         FDRE (Prop_fdre_C_Q)         0.478    -1.084 r  right_edge_reg[1]/Q
+                         net (fo=3, unplaced)         0.488    -0.596    right_edge[1]
+                         LUT2 (Prop_lut2_I0_O)        0.295    -0.301 r  vga_r[2]_i_240/O
+                         net (fo=1, unplaced)         0.000    -0.301    vga_r[2]_i_240_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.533     0.232 r  vga_r_reg[2]_i_208/CO[3]
+                         net (fo=1, unplaced)         0.000     0.232    vga_r_reg[2]_i_208_n_0
+                         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.337     0.569 r  vga_r_reg[2]_i_166/O[1]
+                         net (fo=21, unplaced)        0.672     1.241    x_shift0[5]
+                         LUT3 (Prop_lut3_I1_O)        0.306     1.547 r  vga_r[2]_i_255/O
+                         net (fo=6, unplaced)         0.481     2.028    vga_r[2]_i_255_n_0
+                         LUT4 (Prop_lut4_I0_O)        0.124     2.152 r  vga_r[2]_i_343/O
+                         net (fo=1, unplaced)         0.000     2.152    vga_r[2]_i_343_n_0
+                         CARRY4 (Prop_carry4_S[3]_CO[3])
+                                                      0.376     2.528 r  vga_r_reg[2]_i_316/CO[3]
+                         net (fo=1, unplaced)         0.000     2.528    vga_r_reg[2]_i_316_n_0
+                         CARRY4 (Prop_carry4_CI_O[3])
+                                                      0.331     2.859 r  vga_r_reg[2]_i_291/O[3]
+                         net (fo=2, unplaced)         0.459     3.318    vga_r_reg[2]_i_291_n_4
+                         LUT3 (Prop_lut3_I0_O)        0.307     3.625 r  vga_r[2]_i_248/O
+                         net (fo=2, unplaced)         0.460     4.085    vga_r[2]_i_248_n_0
+                         LUT4 (Prop_lut4_I3_O)        0.124     4.209 r  vga_r[2]_i_252/O
+                         net (fo=1, unplaced)         0.000     4.209    vga_r[2]_i_252_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.533     4.742 r  vga_r_reg[2]_i_214/CO[3]
+                         net (fo=1, unplaced)         0.000     4.742    vga_r_reg[2]_i_214_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117     4.859 r  vga_r_reg[2]_i_185/CO[3]
+                         net (fo=1, unplaced)         0.000     4.859    vga_r_reg[2]_i_185_n_0
+                         CARRY4 (Prop_carry4_CI_O[0])
+                                                      0.232     5.091 r  vga_r_reg[2]_i_155/O[0]
+                         net (fo=5, unplaced)         0.694     5.785    vga_r_reg[2]_i_155_n_7
+                         CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.808     6.593 r  vga_r_reg[2]_i_233/CO[3]
+                         net (fo=1, unplaced)         0.000     6.593    vga_r_reg[2]_i_233_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117     6.710 r  vga_r_reg[2]_i_203/CO[3]
+                         net (fo=1, unplaced)         0.000     6.710    vga_r_reg[2]_i_203_n_0
+                         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.337     7.047 r  vga_r_reg[2]_i_165/O[1]
+                         net (fo=3, unplaced)         0.629     7.676    vga_r_reg[2]_i_165_n_6
+                         LUT3 (Prop_lut3_I0_O)        0.306     7.982 r  vga_r[2]_i_328/O
+                         net (fo=1, unplaced)         0.000     7.982    vga_r[2]_i_328_n_0
+                         CARRY4 (Prop_carry4_S[2]_CO[3])
+                                                      0.380     8.362 r  vga_r_reg[2]_i_298/CO[3]
+                         net (fo=1, unplaced)         0.000     8.362    vga_r_reg[2]_i_298_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117     8.479 r  vga_r_reg[2]_i_270/CO[3]
+                         net (fo=1, unplaced)         0.000     8.479    vga_r_reg[2]_i_270_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117     8.596 r  vga_r_reg[2]_i_224/CO[3]
+                         net (fo=1, unplaced)         0.000     8.596    vga_r_reg[2]_i_224_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117     8.713 r  vga_r_reg[2]_i_194/CO[3]
+                         net (fo=1, unplaced)         0.000     8.713    vga_r_reg[2]_i_194_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117     8.830 r  vga_r_reg[2]_i_156/CO[3]
+                         net (fo=1, unplaced)         0.000     8.830    vga_r_reg[2]_i_156_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117     8.947 r  vga_r_reg[2]_i_129/CO[3]
+                         net (fo=10, unplaced)        0.791     9.738    vga_r_reg[2]_i_129_n_0
+                         LUT3 (Prop_lut3_I0_O)        0.124     9.862 r  vga_r[2]_i_152/O
+                         net (fo=1, unplaced)         0.449    10.311    vga_r[2]_i_152_n_0
+                         LUT6 (Prop_lut6_I4_O)        0.124    10.435 r  vga_r[2]_i_122/O
+                         net (fo=1, unplaced)         0.000    10.435    vga_r[2]_i_122_n_0
+                         CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.513    10.948 r  vga_r_reg[2]_i_93/CO[3]
+                         net (fo=1, unplaced)         0.000    10.948    vga_r_reg[2]_i_93_n_0
+                         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.337    11.285 r  vga_r_reg[2]_i_64/O[1]
+                         net (fo=2, unplaced)         0.622    11.907    vga_gen/zoom3[9]
+                         LUT4 (Prop_lut4_I1_O)        0.332    12.239 r  vga_gen/vga_r[2]_i_19/O
+                         net (fo=1, unplaced)         0.000    12.239    vga_gen/vga_r[2]_i_19_n_0
+                         CARRY4 (Prop_carry4_DI[0]_CO[1])
+                                                      0.537    12.776 f  vga_gen/vga_r_reg[2]_i_6/CO[1]
+                         net (fo=1, unplaced)         0.312    13.088    zoom2
+                         LUT6 (Prop_lut6_I2_O)        0.332    13.420 r  vga_r[2]_i_3/O
+                         net (fo=5, unplaced)         0.477    13.897    vga_gen/vga_b_reg[0]
+                         LUT2 (Prop_lut2_I0_O)        0.124    14.021 r  vga_gen/vga_r[2]_i_1/O
+                         net (fo=8, unplaced)         0.646    14.667    vga_gen_n_41
+                         FDRE                                         r  vga_b_reg[0]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                     15.385    15.385 r  
+    E3                                                0.000    15.385 r  clk_100mhz (IN)
+                         net (fo=0)                   0.000    15.385    clk_gen/clk_100mhz
+    E3                   IBUF (Prop_ibuf_I_O)         1.411    16.796 r  clk_gen/clkin1_ibufg/O
+                         net (fo=1, unplaced)         0.439    17.235    clk_gen/clk_in1_clk_wiz_0
+                         MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -5.381    11.854 r  clk_gen/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, unplaced)         0.763    12.617    clk_gen/clk_out1_clk_wiz_0
+                         BUFG (Prop_bufg_I_O)         0.091    12.708 r  clk_gen/clkout1_buf/O
+                         net (fo=3083, unplaced)      0.439    13.147    clk_65mhz
+                         FDRE                                         r  vga_b_reg[0]/C
+                         clock pessimism              0.531    13.677    
+                         clock uncertainty           -0.130    13.547    
+                         FDRE (Setup_fdre_C_R)       -0.557    12.990    vga_b_reg[0]
+  -------------------------------------------------------------------
+                         required time                         12.990    
+                         arrival time                         -14.667    
+  -------------------------------------------------------------------
+                         slack                                 -1.677    
+
+
+
+

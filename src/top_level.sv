@@ -344,31 +344,221 @@ module top_level(
 
     .suit(card_map[5:4]),  
     .rank(card_map[3:0]), 
-    .suit_score(suit_score), 
-    .rank_score(rank_score),
+    .suit_score(), 
+    .rank_score(),
 
     .cat_out({cag, caf, cae, cad, cac, cab, caa}),
     .an_out(an)); 
 
-  logic [6:0] rank_score; 
-  logic [6:0] suit_score; 
-  logic [5:0] card_map;
-  
-  card_math XOR_operation (
+  logic [10:0] two_score; 
+  XOR_two two_kernel (
     .clk(clk_65mhz), 
     .rst(sys_rst), 
     .hcount(hcount_pipe[4]), 
-    .vcount(vcount_pipe[4]), 
+    .vcount(vcount_pipe[4]),
     .mask(mask), 
 
-    .right_edge(right_edge), 
-    .left_edge(left_edge),
-    .top_edge(top_edge),
-    .bot_edge(bot_edge),
+    .left_edge(left_edge), 
+    .top_edge(top_edge), 
+
+    .two_score(two_score)
+  );
+
+  logic [10:0] three_score; 
+  XOR_three three_kernel (
+    .clk(clk_65mhz), 
+    .rst(sys_rst), 
+    .hcount(hcount_pipe[4]), 
+    .vcount(vcount_pipe[4]),
+    .mask(mask), 
+
+    .left_edge(left_edge), 
+    .top_edge(top_edge), 
+
+    .three_score(three_score)
+  );
+
+  logic [10:0] four_score; 
+  XOR_four four_kernel (
+    .clk(clk_65mhz), 
+    .rst(sys_rst), 
+    .hcount(hcount_pipe[4]), 
+    .vcount(vcount_pipe[4]),
+    .mask(mask), 
+
+    .left_edge(left_edge), 
+    .top_edge(top_edge), 
+
+    .four_score(four_score)
+  );
+
+  logic [10:0] five_score; 
+  XOR_five five_kernel (
+    .clk(clk_65mhz), 
+    .rst(sys_rst), 
+    .hcount(hcount_pipe[4]), 
+    .vcount(vcount_pipe[4]),
+    .mask(mask), 
+
+    .left_edge(left_edge), 
+    .top_edge(top_edge), 
+
+    .five_score(five_score)
+  );
+
+  logic [10:0] six_score; 
+  XOR_six six_kernel (
+    .clk(clk_65mhz), 
+    .rst(sys_rst), 
+    .hcount(hcount_pipe[4]), 
+    .vcount(vcount_pipe[4]),
+    .mask(mask), 
+
+    .left_edge(left_edge), 
+    .top_edge(top_edge), 
+
+    .six_score(six_score)
+  );
+
+  logic [10:0] seven_score; 
+  XOR_seven seven_kernel (
+    .clk(clk_65mhz), 
+    .rst(sys_rst), 
+    .hcount(hcount_pipe[4]), 
+    .vcount(vcount_pipe[4]),
+    .mask(mask), 
+
+    .left_edge(left_edge), 
+    .top_edge(top_edge), 
+
+    .seven_score(seven_score)
+  );
+
+  logic [10:0] eight_score; 
+  XOR_eight eight_kernel (
+    .clk(clk_65mhz), 
+    .rst(sys_rst), 
+    .hcount(hcount_pipe[4]), 
+    .vcount(vcount_pipe[4]),
+    .mask(mask), 
+
+    .left_edge(left_edge), 
+    .top_edge(top_edge), 
+
+    .eight_score(eight_score)
+  );
+
+  logic [10:0] nine_score; 
+  XOR_nine nine_kernel (
+    .clk(clk_65mhz), 
+    .rst(sys_rst), 
+    .hcount(hcount_pipe[4]), 
+    .vcount(vcount_pipe[4]),
+    .mask(mask), 
+
+    .left_edge(left_edge), 
+    .top_edge(top_edge), 
+
+    .nine_score(nine_score)
+  );
+
+  logic [10:0] ten_score; 
+  XOR_ten ten_kernel (
+    .clk(clk_65mhz), 
+    .rst(sys_rst), 
+    .hcount(hcount_pipe[4]), 
+    .vcount(vcount_pipe[4]),
+    .mask(mask), 
+
+    .left_edge(left_edge), 
+    .top_edge(top_edge), 
+
+    .ten_score(ten_score)
+  );
+
+  logic [10:0] jack_score; 
+  XOR_jack jack_kernel (
+    .clk(clk_65mhz), 
+    .rst(sys_rst), 
+    .hcount(hcount_pipe[4]), 
+    .vcount(vcount_pipe[4]),
+    .mask(mask), 
+
+    .left_edge(left_edge), 
+    .top_edge(top_edge), 
+
+    .jack_score(jack_score)
+  );
+
+  logic [10:0] queen_score; 
+  XOR_queen queen_kernel (
+    .clk(clk_65mhz), 
+    .rst(sys_rst), 
+    .hcount(hcount_pipe[4]), 
+    .vcount(vcount_pipe[4]),
+    .mask(mask), 
+
+    .left_edge(left_edge), 
+    .top_edge(top_edge), 
+
+    .queen_score(queen_score)
+  );
+
+  logic [10:0] king_score; 
+  XOR_king king_kernel (
+    .clk(clk_65mhz), 
+    .rst(sys_rst), 
+    .hcount(hcount_pipe[4]), 
+    .vcount(vcount_pipe[4]),
+    .mask(mask), 
+
+    .left_edge(left_edge), 
+    .top_edge(top_edge), 
+
+    .king_score(king_score)
+  );
+
+  logic [10:0] ace_score; 
+  XOR_ace ace_kernel (
+    .clk(clk_65mhz), 
+    .rst(sys_rst), 
+    .hcount(hcount_pipe[4]), 
+    .vcount(vcount_pipe[4]),
+    .mask(mask), 
+
+    .left_edge(left_edge), 
+    .top_edge(top_edge), 
+
+    .ace_score(ace_score)
+  );
+
+  comparator best_score_calculator (
+    .two_score(two_score),
+    .three_score(three_score),
+    .four_score(four_score),
+    .five_score(five_score),
+    .six_score(six_score),
+    .seven_score(seven_score),
+    .eight_score(eight_score),
+    .nine_score(nine_score),
+    .ten_score(ten_score),
+    .jack_score(jack_score),
+    .queen_score(queen_score),
+    .king_score(king_score),
+    .ace_score(ace_score),
+
+    .spade_score(300), 
+    .diamond_score(300),
+    .heart_score(200),
+    .club_score(320),
     
-    .rank_score(rank_score),
+    .rank_score(rank_score), 
     .suit_score(suit_score),
     .card_map(card_map));
+
+  logic [6:0] rank_score; //left edge
+  logic [6:0] suit_score; //middle
+  logic [5:0] card_map; //right edge 
 
   //Create Crosshair, edges, zoom
   assign crosshair = ((vcount==y_com)||(hcount==x_com));

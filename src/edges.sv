@@ -23,16 +23,16 @@ module edges #(
     input wire rst_in, //system reset
 
     input wire find_corners_flag,
-    input wire [$clog2(WIDTH) - 1: 0] x_center, //8 bits
-    input wire [$clog2(HEIGHT) - 1: 0] y_center, //9 bits
+    input wire [10: 0] x_center, //8 bits
+    input wire [9: 0] y_center, //9 bits
     input wire pixel_data_in,  
 
     output logic [$clog2(WIDTH*HEIGHT) - 1:0] addr_out, // 17 bits 
     output logic data_valid_out,
-    output logic [$clog2(WIDTH) - 1: 0] right_edge, 
-    output logic [$clog2(WIDTH) - 1: 0] left_edge,
-    output logic [$clog2(HEIGHT) - 1: 0] top_edge,
-    output logic [$clog2(HEIGHT) - 1: 0] bot_edge
+    output logic [10: 0] right_edge, 
+    output logic [10: 0] left_edge,
+    output logic [9: 0] top_edge,
+    output logic [9: 0] bot_edge
   );
 
 logic delay_flag = 1'b0; 

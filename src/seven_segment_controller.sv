@@ -25,19 +25,19 @@ module seven_segment_controller #(parameter COUNT_TO = 'd100_000)
 
   always_ff @(posedge clk_in) begin
     if (segment_state == 8'b0000_0100) begin //0
-      routed_vals <= 4'b0000;
+      routed_vals <= 4'b1111;
     end 
     if (segment_state == 8'b0000_1000) begin //suit_score (ones)
-      routed_vals <= suit_score - suit_score/4'd10; 
+      routed_vals <= suit_score - ((suit_score/4'd10)*4'd10); 
     end 
     if (segment_state == 8'b0001_0000) begin //suit_score (tens)
       routed_vals <= suit_score/4'd10;
     end 
     if (segment_state == 8'b0010_0000) begin //0
-      routed_vals <= 4'b0000;
+      routed_vals <= 4'b1111;
     end 
     if (segment_state == 8'b0100_0000) begin //rank_score (ones)
-      routed_vals <= rank_score - rank_score/4'd10;
+      routed_vals <= rank_score - ((rank_score/4'd10)*4'd10);
     end 
     if (segment_state == 8'b1000_0000) begin //rank_score (tens)
       routed_vals <= rank_score/4'd10;
@@ -45,8 +45,8 @@ module seven_segment_controller #(parameter COUNT_TO = 'd100_000)
   end
 
   bto7s basic_numbers (.x_in(routed_vals), .s_out(led_out_basic));
-  bto7s_rank rank     (.rank(rank), .s_out(led_out_rank));
-  bto7s_suit suit     (.suit(suit), .s_out(led_out_suit));
+  bto7s_rank rank_numbers     (.rank(rank), .s_out(led_out_rank));
+  bto7s_suit suit_numbers     (.suit(suit), .s_out(led_out_suit));
 
   always_comb begin : led_out_route
     if (segment_state == 8'b0000_0001) begin 
@@ -55,7 +55,7 @@ module seven_segment_controller #(parameter COUNT_TO = 'd100_000)
     if (segment_state == 8'b0000_0010) begin 
       cat_out = ~led_out_rank;
     end
-    else begin 
+    if (segment_state == 8'b0000_0100 || segment_state == 8'b0000_1000 || segment_state == 8'b0001_0000 || segment_state == 8'b0010_0000 || segment_state == 8'b0100_0000 || segment_state == 8'b1000_0000) begin 
       cat_out = ~led_out_basic; 
     end 
     an_out = ~segment_state;

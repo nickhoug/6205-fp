@@ -117,18 +117,19 @@ def test_2(i, j, file_path_name):
     return 
 
 def png_to_mem(file_path):
-    width, height = 240, 320
 
-    im = Image.open(file_path) 
-    im = im.resize((width, height), Image.BILINEAR)
-    im = np.array(im) #im.shape -> (320, 240, 3) -> (Height, Width, Depth)
+    img = Image.open(file_path) 
+    img = np.array(img) #im.shape -> (320, 240, 3) -> (Height, Width, Depth)
+    height, width = np.shape(img)
 
-    with open(f'mem_test/{file_path[12:len(file_path)-4]}.mem', 'w') as f:
-        for j in list(range(height)): 
-            for i in list(range(width)): 
-                binary_pixel = binary(im[j, i][0])[2:7] + binary(im[j, i][1])[2:8] + binary(im[j, i][2])[2:7] # <class 'str'>
-                hex_value = bin_to_hex(binary_pixel)
-                f.write(f'{hex_value}\n')
+    with open(f'mem_kernel/{file_path[15:len(file_path)-11]}.mem', 'w') as f:
+        for j in range(height): 
+            for i in range(width): 
+                if img[j][i] == 255: 
+                    f.write(f'1\n')
+                if img[j][i] == 0: 
+                    f.write(f'0\n')
+
     return 
 
 def mem_to_png_RGB(file_path):
@@ -265,6 +266,25 @@ def kernel_maker(file_path):
     print('\n')
     return 
 
+rank = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+suit = ['c', 'd', 'h', 's']
+
+for i in range(len(rank)):
+    png_to_mem(f'images_kernels/{rank[i]}_thresh.png')
+
+for i in range(len(suit)):
+    png_to_mem(f'images_kernels/{suit[i]}_thresh.png')
+
+
+
+
+#for i in range(len(suit)):
+    #kernel_processer(f'images_kernels/{suit[i]}.png', 160, 29, 28)
+    #kernel_maker(f'images_kernels/{suit[i]}_thresh.png')
+    #kernel_processer(f'images_kernels/{rank[i]}.png', 160, 40, 28)
+    #kernel_maker(f'images_kernels/{rank[i]}_thresh.png')
+    #png_to_mem(f'images_kernels/{suit[i]}_thresh.png')
+
 #card_name = 'ace_of_hearts'
 #png_to_mem(f'images_test/{card_name}_test.png')
 #clear_comments(f'mem_thresh/{card_name}_thresh.mem')
@@ -273,15 +293,3 @@ def kernel_maker(file_path):
 #edges(f'images_thresh/{card_name}_thresh_mask.png', 73, 155, 95, 211)
 #clear_comments(f'mem_corner/{card_name}_corner.mem')
 #mem_to_png_edges(f'mem_corner/{card_name}_corner_processed.mem', 23, 10)
-
-rank = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
-suit = ['c', 'd', 'h', 's']
-
-for i in range(len(rank)):
-    #kernel_processer(f'images_kernels/{rank[i]}.png', 160, 40, 28)
-    kernel_maker(f'images_kernels/{rank[i]}_thresh.png')
-
-
-for i in range(len(suit)):
-    #kernel_processer(f'images_kernels/{suit[i]}.png', 160, 29, 28)
-    kernel_maker(f'images_kernels/{suit[i]}_thresh.png')

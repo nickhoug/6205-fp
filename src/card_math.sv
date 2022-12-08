@@ -1,6 +1,9 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
+`define RANK_SIZE corner_width * rank_height
+`define SUIT_SIZE corner_width * suit_height
+
 module card_math #(
     parameter HEIGHT = 640, 
     parameter WIDTH = 480, 
@@ -65,30 +68,30 @@ logic [811:0] club    = 812'hffffffffffffffffffffffffffffffe07ffffc03ffff801ffff
 logic [1119:0] rank; 
 logic [811:0] suit;
 
-logic [10:0] output_rank_score; 
-logic [9:0] output_suit_score;
+logic [$clog2(`RANK_SIZE) - 1:0] output_rank_score; 
+logic [$clog2(`SUIT_SIZE) - 1:0] output_suit_score; 
 
 logic [3:0] output_rank_map; 
-logic [3:0] output_suit_map; 
+logic [1:0] output_suit_map; 
 
-logic [10:0] two_score; 
-logic [10:0] three_score;
-logic [10:0] four_score;
-logic [10:0] five_score;
-logic [10:0] six_score;
-logic [10:0] seven_score;
-logic [10:0] eight_score;
-logic [10:0] nine_score;
-logic [10:0] ten_score;
-logic [10:0] jack_score;
-logic [10:0] queen_score;
-logic [10:0] king_score;
-logic [10:0] ace_score;
+logic [$clog2(`RANK_SIZE) - 1:0] two_score; 
+logic [$clog2(`RANK_SIZE) - 1:0] three_score;
+logic [$clog2(`RANK_SIZE) - 1:0] four_score;
+logic [$clog2(`RANK_SIZE) - 1:0] five_score;
+logic [$clog2(`RANK_SIZE) - 1:0] six_score;
+logic [$clog2(`RANK_SIZE) - 1:0] seven_score;
+logic [$clog2(`RANK_SIZE) - 1:0] eight_score;
+logic [$clog2(`RANK_SIZE) - 1:0] nine_score;
+logic [$clog2(`RANK_SIZE) - 1:0] ten_score;
+logic [$clog2(`RANK_SIZE) - 1:0] jack_score;
+logic [$clog2(`RANK_SIZE) - 1:0] queen_score;
+logic [$clog2(`RANK_SIZE) - 1:0] king_score;
+logic [$clog2(`RANK_SIZE) - 1:0] ace_score;
 
-logic [9:0] spade_score;
-logic [9:0] diamond_score;
-logic [9:0] heart_score;
-logic [9:0] club_score;
+logic [$clog2(`SUIT_SIZE) - 1:0] spade_score;
+logic [$clog2(`SUIT_SIZE) - 1:0] diamond_score;
+logic [$clog2(`SUIT_SIZE) - 1:0] heart_score;
+logic [$clog2(`SUIT_SIZE) - 1:0] club_score;
 
 logic [1119:0] two_score_array; 
 logic [1119:0] three_score_array;
@@ -109,8 +112,8 @@ logic [811:0] diamond_score_array;
 logic [811:0] heart_score_array;
 logic [811:0] club_score_array;
 
-logic [10:0] index_rank; 
-logic [9:0] index_suit; 
+logic [$clog2(`RANK_SIZE) - 1:0] index_rank; 
+logic [$clog2(`SUIT_SIZE) - 1:0] index_suit; 
 
 assign two_score_array   = two ^ rank; 
 assign three_score_array = three ^ rank;
@@ -131,9 +134,9 @@ assign diamond_score_array     = diamond ^ suit;
 assign heart_score_array       = heart ^ suit; 
 assign club_score_array        = club ^ suit; 
 
-assign card_map = {output_rank_map, output_rank_map};
-assign rank_score = 100 - (output_rank_score * 100) / (corner_width * rank_height); //should be percentage where 100% is perfect
-assign suit_score = 100 - (output_suit_score * 100) / (corner_width * suit_height);
+assign card_map = {output_suit_map, output_rank_map}; //{suit, rank}
+assign rank_score = 7'd100 - (output_rank_score / `RANK_SIZE) * 7'd100; //should be percentage where 100% is perfect
+assign suit_score = 7'd100 - (output_suit_score / `SUIT_SIZE) * 7'd100;
 
 always_ff @(posedge clk) begin : update
   if ((hcount > (left_edge + 4)) && (hcount <= (left_edge + 4 + corner_width)) && (vcount > top_edge) && (vcount < (top_edge + rank_height))) begin 

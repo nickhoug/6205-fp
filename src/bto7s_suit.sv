@@ -22,13 +22,13 @@ module bto7s_suit(
 
   logic sa, sb, sc, sd, se, sf, sg;
 
-  assign sa = num[2] || num[3];
+  assign sa = num[3];
   assign sb = num[0]; 
   assign sc = num[0] || num[1] || num[3];
   assign sd = num[0] || num[2] || num[3];
   assign se = num[0] || num[1] || num[2];
-  assign sf = num[1] || num[2] || num[3];
-  assign sg = num[0] || num[1] || num[3];
+  assign sf = num[1] || num[3];
+  assign sg = num[0] || num[1] || num[2] || num[3];
 
   assign s_out[6] = sg;
   assign s_out[5] = sf;
